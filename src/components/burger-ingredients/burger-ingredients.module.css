@@ -1,0 +1,37 @@
+.mainBlock {
+  display: flex;
+  flex-direction: column;
+  margin-left: auto;
+  height: 912px;
+  /* border: 1px dashed red; */
+}
+
+.ingredientSection {
+  display: flex;
+  flex-flow: column;
+  overflow-y: scroll;
+  height: 756px;
+}
+
+.ingredientsButch {
+  display: flex;
+  flex-flow: row wrap;
+  max-width: 600px;
+  width: 100%;
+  column-gap: 24px;
+  margin-left: 16px;
+}
+
+.mainTitle {
+  margin-top: 40px;
+}
+
+.tabs {
+  display: flex;
+  margin-top: 20px;
+}
+
+.butchTitle {
+  margin-top: 40px;
+}
+

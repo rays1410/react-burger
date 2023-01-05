@@ -17,7 +17,7 @@ const AppHeader = () => {
             <BurgerIcon type="primary" />
             <a
               href="/"
-              className={`${headerStyles.linkStyle} text text_type_main-default`}
+              className={`text text_type_main-default`}
             >
               Конструктор
             </a>
@@ -27,7 +27,7 @@ const AppHeader = () => {
             <ListIcon type="primary" />
             <a
               href="/"
-              className={`${headerStyles.linkStyle} text text_type_main-default`}
+              className={`text text_type_main-default`}
             >
               Лента заказов
             </a>
@@ -43,7 +43,7 @@ const AppHeader = () => {
             <ProfileIcon type="primary" />
             <a
               href="/"
-              className={`${headerStyles.linkStyle} text text_type_main-default`}
+              className={`text text_type_main-default`}
             >
               Личный кабинет
             </a>

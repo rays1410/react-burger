@@ -1,0 +1,55 @@
+.mainBlock {
+  display: flex;
+  flex-direction: column;
+  height: 912px;
+  padding-left: 16px;
+  padding-right: 16px;
+  margin-right: auto;
+  /* border: 1px dashed red; */
+}
+
+.allBurgerElements {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 656px;
+  max-width: 568px;
+  width: 100%;
+  margin-top: 100px;
+  gap: 10px;
+  /* border: 1px dashed red; */
+  padding-top: 16px;
+}
+
+.dynamicBurgerElements {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 440px;
+  overflow-y: scroll;
+  gap: 10px;
+}
+
+.burgerItem {
+  display: flex;
+  align-items: center;
+}
+
+.bunItem {
+  align-self: center;
+}
+
+.priceAndOrder {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  max-width: 600px;
+  width: 100%;
+  margin-top: 40px;
+}
+
+.price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
