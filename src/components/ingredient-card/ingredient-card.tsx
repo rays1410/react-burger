@@ -1,9 +1,7 @@
-import React from "react";
 import ingredientCardStyles from "./ingredient-card.module.css";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 
 const IngredientCard = ({ ingredient }: any) => {
-  console.log(ingredient);
   return (
     <div className={ingredientCardStyles.ingredientCard}>
       <img src={ingredient.image} className={ingredientCardStyles.cardImg} />

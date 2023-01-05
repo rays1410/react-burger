@@ -11,7 +11,13 @@ function findButchItems(typeName: any) {
 }
 
 const BurgerIngredients = () => {
-  const [current, setCurrent] = React.useState("Булки");
+  const [current, setCurrent] = React.useState("bun");
+  
+  const mapRussianTitles = {
+    bun: "Булки",
+    sauce: "Соусы",
+    main: "Начинки",
+  };
 
   return (
     <div className={ingredientStyles.mainBlock}>
@@ -19,22 +25,20 @@ const BurgerIngredients = () => {
         Соберите бургер
       </p>
 
+      {/* Go throughout [key, value] of mapRussianTitles and draw tabs */}
       <div className={ingredientStyles.tabs}>
-        <Tab value="bun" active={current === "bun"} onClick={setCurrent}>
-          Булки
-        </Tab>
-        <Tab value="sauce" active={current === "sauce"} onClick={setCurrent}>
-          Соусы
-        </Tab>
-        <Tab value="main" active={current === "main"} onClick={setCurrent}>
-          Начинки
-        </Tab>
+        {Object.entries(mapRussianTitles).map(([key]) => (
+          <Tab key={key} value={key} active={current === key} onClick={setCurrent}>
+            {mapRussianTitles[key as keyof typeof mapRussianTitles]}
+          </Tab>
+        ))}
       </div>
 
+      {/* Draw the list of ingredients, which correspodns to the chosen tab */}
       <div className={ingredientStyles.ingredientSection}>
-        <IngredientType typeName={"Булки"} data={findButchItems("bun")} />
-        <IngredientType typeName={"Соусы"} data={findButchItems("sauce")} />
-        <IngredientType typeName={"Начинки"} data={findButchItems("main")} />
+        <IngredientType data={findButchItems(current)}>
+          {mapRussianTitles[current as keyof typeof mapRussianTitles]}
+        </IngredientType>
       </div>
     </div>
   );
