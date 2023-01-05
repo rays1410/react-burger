@@ -1,17 +1,24 @@
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import React from "react";
 import ingredientsData from "../../utils/data.js";
-import IngredientCard from "../ingredient-card/ingredient-card";
+import IngredientType from "../ingredient-type/ingredient-type";
 import ingredientStyles from "./burger-ingredients.module.css";
+
+// Find all entries of ingredient type
+// For example, if typeName is equal 'bun', function return array of all buns
+function findButchItems(typeName: any) {
+  return ingredientsData.filter((item) => item.type === typeName);
+}
 
 const BurgerIngredients = () => {
   const [current, setCurrent] = React.useState("Булки");
+
   return (
     <div className={ingredientStyles.mainBlock}>
       <p className={`${ingredientStyles.mainTitle} text text_type_main-large`}>
         Соберите бургер
       </p>
-      {/* <div style={{ display: "flex" }}> */}
+
       <div className={ingredientStyles.tabs}>
         <Tab value="bun" active={current === "bun"} onClick={setCurrent}>
           Булки
@@ -25,28 +32,9 @@ const BurgerIngredients = () => {
       </div>
 
       <div className={ingredientStyles.ingredientSection}>
-        <p
-          className={`${ingredientStyles.butchTitle} text text_type_main-medium`}
-        >
-          Булки
-        </p>
-        <div className={ingredientStyles.ingredientsButch}>
-          <IngredientCard image={ingredientsData[0].image} />
-          <IngredientCard image={ingredientsData[0].image} />
-          <IngredientCard image={ingredientsData[0].image} />
-        </div>
-
-        <p
-          className={`${ingredientStyles.butchTitle} text text_type_main-medium`}
-        >
-          Булки
-        </p>
-        <div className={ingredientStyles.ingredientsButch}>
-          <IngredientCard image={ingredientsData[0].image} />
-          <IngredientCard image={ingredientsData[0].image} />
-          <IngredientCard image={ingredientsData[0].image} />
-          <IngredientCard image={ingredientsData[0].image} />
-        </div>
+        <IngredientType typeName={"Булки"} data={findButchItems("bun")} />
+        <IngredientType typeName={"Соусы"} data={findButchItems("sauce")} />
+        <IngredientType typeName={"Начинки"} data={findButchItems("main")} />
       </div>
     </div>
   );

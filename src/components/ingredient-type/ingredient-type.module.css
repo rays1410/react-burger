@@ -1,0 +1,12 @@
+.ingredientsButch {
+  display: flex;
+  flex-flow: row wrap;
+  max-width: 600px;
+  width: 100%;
+  column-gap: 24px;
+  margin-left: 16px;
+}
+
+.butchTitle {
+  margin-top: 40px;
+}

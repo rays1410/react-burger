@@ -27,7 +27,7 @@ const AppHeader = () => {
             <ListIcon type="primary" />
             <a
               href="/"
-              className={`text text_type_main-default`}
+              className={`text text_type_main-default text_color_inactive`}
             >
               Лента заказов
             </a>
@@ -43,7 +43,7 @@ const AppHeader = () => {
             <ProfileIcon type="primary" />
             <a
               href="/"
-              className={`text text_type_main-default`}
+              className={`text text_type_main-default text_color_inactive`}
             >
               Личный кабинет
             </a>
