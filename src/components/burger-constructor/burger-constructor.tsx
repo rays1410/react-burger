@@ -6,13 +6,11 @@ import {
 } from "@ya.praktikum/react-developer-burger-ui-components";
 
 import constructorStyles from "./burger-constructor.module.css";
-
-import { ingredientsData, hardcodedIDs } from "../../utils/data";
-import { mockObject } from "../../utils/constants";
-import { IngredientObject } from "../../utils/interfaces";
+import { ingredientsData } from "../../utils/data";
 
 // TODO there: replace num field by Symbol and fetch data from server
 const BurgerConstructor = () => {
+  
   // Currently hardcoded
   const numOfTestIngredients = 8;
   const totalNumberOfIngredients = ingredientsData.length;
