@@ -4,53 +4,26 @@ import {
   CurrencyIcon,
   DragIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
-import ingredientsData from "../../utils/data.js";
+
 import constructorStyles from "./burger-constructor.module.css";
 
-const getItemByID = (data: any, id: any) => {
-  return data.find((item: { _id: any }) => item._id === id);
-};
+import { ingredientsData, hardcodedIDs } from "../../utils/data";
+import { mockObject } from "../../utils/constants";
+import { IngredientObject } from "../../utils/interfaces";
 
 // TODO there: replace num field by Symbol and fetch data from server
-const hardcodedIDs = [
-  {
-    name: "Соус традиционный галактический",
-    _id: "60666c42cc7b410027a1a9b9",
-    num: 0,
-  },
-  {
-    name: "Мясо бессмертных моллюсков Protostomia",
-    _id: "60666c42cc7b410027a1a9b4",
-    num: 1,
-  },
-  {
-    name: "Плоды Фалленианского дерева",
-    _id: "60666c42cc7b410027a1a9bc",
-    num: 2,
-  },
-  {
-    name: "Хрустящие минеральные кольца",
-    _id: "60666c42cc7b410027a1a9b9",
-    num: 3,
-  },
-  {
-    name: "Хрустящие минеральные кольца",
-    _id: "60666c42cc7b410027a1a9bb",
-    num: 4,
-  },
-  {
-    name: "Кристаллы марсианских альфа-сахаридов",
-    _id: "60666c42cc7b410027a1a9bd",
-    num: 5,
-  },
-  {
-    name: "Кристаллы марсианских альфа-сахаридов",
-    _id: "60666c42cc7b410027a1a9bd",
-    num: 6,
-  },
-];
-
 const BurgerConstructor = () => {
+  // Currently hardcoded
+  const numOfTestIngredients = 8;
+  const totalNumberOfIngredients = ingredientsData.length;
+  const testIngredients = [];
+  for (let i = 0; i < numOfTestIngredients; i++) {
+    let randIndx = Math.floor(
+      Math.random() * (totalNumberOfIngredients - 1) + 1
+    );
+    testIngredients.push({num: i, ...ingredientsData[randIndx]});
+  }
+
   return (
     <div className={constructorStyles.mainBlock}>
       <div className={constructorStyles.allBurgerElements}>
@@ -65,18 +38,18 @@ const BurgerConstructor = () => {
         />
 
         <div className={constructorStyles.dynamicBurgerElements}>
-          {hardcodedIDs.map((item) => (
+          {testIngredients.map((item) => (
             <div key={item.num} className={constructorStyles.burgerItem}>
               <DragIcon type="primary" />
               <ConstructorElement
                 text={item.name}
-                price={15}
-                thumbnail={getItemByID(ingredientsData, item._id).image}
+                price={item.price}
+                thumbnail={item.image}
               />
             </div>
           ))}
         </div>
-        
+
         <ConstructorElement
           type="bottom"
           isLocked={true}
@@ -100,7 +73,6 @@ const BurgerConstructor = () => {
           Оформить заказ
         </Button>
       </div>
-      
     </div>
   );
 };

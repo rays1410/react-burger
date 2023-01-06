@@ -1,7 +1,8 @@
 import ingredientCardStyles from "./ingredient-card.module.css";
+import {IngredientCardType} from "../../utils/interfaces"
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 
-const IngredientCard = ({ ingredient }: any) => {
+const IngredientCard = ({ingredient}: IngredientCardType) => {
   return (
     <div className={ingredientCardStyles.ingredientCard}>
       <img src={ingredient.image} className={ingredientCardStyles.cardImg} />

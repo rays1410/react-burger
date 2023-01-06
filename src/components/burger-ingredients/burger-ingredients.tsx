@@ -5,8 +5,9 @@ import IngredientType from "../ingredient-type/ingredient-type";
 import ingredientStyles from "./burger-ingredients.module.css";
 
 // Find all entries of ingredient type
-// For example, if typeName is equal 'bun', function return array of all buns
-function findButchItems(typeName: any) {
+// For example, if typeName is 'bun', function returns array of all buns
+
+function findButchItems(typeName: string) {
   return ingredientsData.filter((item) => item.type === typeName);
 }
 
