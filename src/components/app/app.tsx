@@ -1,15 +1,14 @@
 import AppHeader from "../app-header/app-header";
+import appStyles from "./app.module.css";
 import BurgerConstructor from "../burger-constructor/burger-constructor";
 import BurgerIngredients from "../burger-ingredients/burger-ingredients";
-import appStyles from "./app.module.css"
-
 function App() {
   return (
     <>
-      <AppHeader/>
+      <AppHeader />
       <div className={appStyles.centralBlock}>
-        <BurgerIngredients/>
-        <BurgerConstructor/>
+        <BurgerIngredients />
+        <BurgerConstructor />
       </div>
     </>
   );

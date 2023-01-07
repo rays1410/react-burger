@@ -1,4 +1,3 @@
-import React from "react";
 import headerStyles from "./app-header.module.css";
 import "@ya.praktikum/react-developer-burger-ui-components";
 import { Logo } from "@ya.praktikum/react-developer-burger-ui-components/dist/ui/logo";

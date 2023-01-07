@@ -2,6 +2,9 @@ import ingredientCardStyles from "./ingredient-card.module.css";
 import { IngredientCardType } from "../../utils/interfaces";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 
+// This component represents cards of ingredients that
+// we see in the left part of application
+
 const IngredientCard = ({ ingredient }: IngredientCardType) => {
   return (
     <div className={ingredientCardStyles.ingredientCard}>

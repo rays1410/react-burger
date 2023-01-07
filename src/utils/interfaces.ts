@@ -20,4 +20,5 @@ export interface IngredientCardType {
 export interface IngredientTypeTypes {
   children: React.ReactNode;
   data: IngredientObject[];
+  typeName: string;
 }
