@@ -1,0 +1,21 @@
+.mainBlock {
+  display: flex;
+  flex-direction: column;
+  margin-left: auto;
+}
+
+.ingredientSection {
+  display: flex;
+  flex-flow: column;
+  overflow-y: scroll;
+  height: 756px;
+}
+
+.mainTitle {
+  margin-top: 40px;
+}
+
+.tabs {
+  display: flex;
+  margin-top: 20px;
+}
