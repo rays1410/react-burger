@@ -52,19 +52,17 @@ const BurgerIngredients = () => {
       {/* <Element> defines container in which we can walk using tabs */}
       {/* Using container id, <Link> understands where it scroll us*/}
       {/* In <IngredientType>, we wrap titles with <Element> creating 'anchors' for react-scroll*/}
-      <div>
-        <Element
-          name="leftContainer"
-          id="ingredientsContainer"
-          className={ingredientStyles.ingredientSection}
-        >
-          {titlesEntries.map(([key, value]) => (
-            <IngredientType key={key} data={findButchItems(key)} typeName={key}>
-              {value}
-            </IngredientType>
-          ))}
-        </Element>
-      </div>
+      <Element
+        name="leftContainer"
+        id="ingredientsContainer"
+        className={ingredientStyles.ingredientSection}
+      >
+        {titlesEntries.map(([key, value]) => (
+          <IngredientType key={key} data={findButchItems(key)} typeName={key}>
+            {value}
+          </IngredientType>
+        ))}
+      </Element>
     </div>
   );
 };
