@@ -27,3 +27,9 @@ export interface IngredientTypeTypes {
   data: IngredientObject[];
   typeName: string;
 }
+
+export interface ModalTypes {
+  children: React.ReactNode;
+  header: string;
+  onClosed: any;
+}

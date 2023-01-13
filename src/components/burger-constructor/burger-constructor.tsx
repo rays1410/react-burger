@@ -17,15 +17,16 @@ const BurgerConstructor = () => {
   const numOfTestIngredients = 8;
   const totalNumberOfIngredients = ingredientsData.length;
   const testIngredients = [];
+
+  // Generate random set of ingredients in the constructor
   for (let i = 0; i < numOfTestIngredients; i++) {
-    let randIndx = Math.floor(
-      Math.random() * (totalNumberOfIngredients - 1) + 1
-    );
+    let randIndx = Math.floor(Math.random() * totalNumberOfIngredients);
     testIngredients.push({ num: i, ...ingredientsData[randIndx] });
   }
 
+  // State for modal window
   const [modalVisible, setModalVisible] = React.useState(false);
-  const toggleModal = (e: any) => {
+  const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
 
@@ -42,7 +43,7 @@ const BurgerConstructor = () => {
             price={200}
             thumbnail={ingredientsData[1].image}
           />
-
+          
           <div className={constructorStyles.dynamicBurgerElements}>
             {testIngredients.map((item) => (
               <div key={item.num} className={constructorStyles.burgerItem}>
@@ -81,7 +82,7 @@ const BurgerConstructor = () => {
           </Button>
         </div>
       </div>
-
+      
       {modalVisible && (
         <Modal header={" "} onClosed={toggleModal}>
           <OrderDetails />

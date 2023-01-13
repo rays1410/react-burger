@@ -9,8 +9,10 @@ import IngredientDetails from "../ingredient-details/ingredient-details";
 // we see in the left part of application
 
 const IngredientCard = ({ ingredient }: IngredientCardType) => {
+
+  // State for modal window
   const [modalVisible, setModalVisible] = React.useState(false);
-  const toggleModal = (e: any) => {
+  const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
 

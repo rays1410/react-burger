@@ -4,13 +4,12 @@ import appStyles from "./app.module.css";
 import BurgerConstructor from "../burger-constructor/burger-constructor";
 import BurgerIngredients from "../burger-ingredients/burger-ingredients";
 import { apiURL } from "../../utils/constants";
-import hardcodedData from "../../utils/data.js";
 
 function App() {
   const [state, setState] = React.useState({
     isLoading: false,
     isError: false,
-    ingredientsData: hardcodedData,
+    ingredientsData: [],
   });
 
   React.useEffect(() => {
@@ -19,22 +18,20 @@ function App() {
       fetch(`${apiURL}`)
         .then((res) => res.json())
         .then((data) =>
-          setState({ ...state, ingredientsData: data, isLoading: false })
+          setState({ ...state, ingredientsData: data.data, isLoading: false })
         )
         .catch((e) => {
           setState({ ...state, isLoading: false, isError: true });
         });
     };
-    // getData();
+    getData();
   }, []);
-
-
 
   return (
     <>
       <AppHeader />
       <div className={appStyles.centralBlock}>
-        <BurgerIngredients ingredientsData={state.ingredientsData} />
+        <BurgerIngredients {...state} />
         <BurgerConstructor />
       </div>
     </>

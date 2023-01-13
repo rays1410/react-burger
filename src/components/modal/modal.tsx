@@ -2,18 +2,20 @@ import modalStyles from "./modal.module.css";
 import ReactDOM from "react-dom";
 import { CloseIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import React from "react";
+import { ModalTypes } from "../../utils/interfaces";
 
 const modalRoot = document.getElementById("react-modals") as HTMLElement;
 
-const Modal = ({ children, header, onClosed }: any) => {
+const Modal = ({ children, header, onClosed }: ModalTypes) => {
   
+  // Subscription on ESC button
   React.useEffect(() => {
-
     const close = (event: any) => {
       if (event.keyCode === 27) {
         onClosed();
       }
     };
+
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
   }, []);
