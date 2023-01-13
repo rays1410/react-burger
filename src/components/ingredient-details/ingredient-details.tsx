@@ -1,18 +1,22 @@
 import React from "react";
 import ingredientDetailsStyles from "./ingredient-details.module.css";
-import doneIcon from "../../images/done.svg";
+import {nameMapping} from "../../utils/constants"
 
 const IngredientDetails = ({
-  ingredientImage,
-  ingredientName,
-  infoArray,
+  ingredient,
 }: any) => {
+
   return (
     <div className={ingredientDetailsStyles.modalContent}>
-      <img src={ingredientImage} className={`mb-4`} />
-      <p className="text text_type_main-medium mb-5">{ingredientName}</p>
+      <img src={ingredient.image_large} className={`mb-4`} />
+      <p className="text text_type_main-medium mb-5">{ingredient.name}</p>
       <div className={ingredientDetailsStyles.bottomTable}>
-        {infoArray.map((item: any) => <div className={ingredientDetailsStyles.tableItem}>12313</div>)}
+        {Object.entries(nameMapping).map(([key, value]: any) => (
+          <div key={key} className={ingredientDetailsStyles.tableItem}>
+            <p className={`text text_type_main-default text_color_inactive`}>{value}</p>
+            <p className={`text text_type_digits-default text_color_inactive`}>{ingredient[key]}</p>
+          </div>
+        ))}
       </div>
     </div>
   );

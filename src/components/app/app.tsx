@@ -5,9 +5,6 @@ import BurgerConstructor from "../burger-constructor/burger-constructor";
 import BurgerIngredients from "../burger-ingredients/burger-ingredients";
 import { apiURL } from "../../utils/constants";
 import hardcodedData from "../../utils/data.js";
-import Modal from "../modal/modal";
-import OrderDetails from "../order-details/order-details";
-import IngredientDetails from "../ingredient-details/ingredient-details";
 
 function App() {
   const [state, setState] = React.useState({
@@ -31,25 +28,11 @@ function App() {
     // getData();
   }, []);
 
+
+
   return (
     <>
       <AppHeader />
-      <Modal header={""}>
-        <OrderDetails />
-      </Modal>
-      <Modal header={"Детали ингредиента"}>
-        <IngredientDetails
-          ingredientImage={hardcodedData[0].image_large}
-          ingredientName={hardcodedData[0].name}
-          infoArray={[
-            hardcodedData[0].calories,
-            hardcodedData[0].calories,
-            hardcodedData[0].calories,
-            hardcodedData[0].calories,
-          ]}
-        />
-      </Modal>
-
       <div className={appStyles.centralBlock}>
         <BurgerIngredients ingredientsData={state.ingredientsData} />
         <BurgerConstructor />

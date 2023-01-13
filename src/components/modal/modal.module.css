@@ -7,6 +7,11 @@ p {
   width: 100%;
   background: #17171a;
   border-radius: 40px;
+  position: absolute;
+  /* float: left; */
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .modalContent {
@@ -27,4 +32,13 @@ p {
 .closeButton {
   display: flex;
   align-items: center;
+}
+
+.overlay {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.6);
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
 }
