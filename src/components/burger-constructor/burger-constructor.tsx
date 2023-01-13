@@ -7,10 +7,11 @@ import {
 
 import constructorStyles from "./burger-constructor.module.css";
 import { ingredientsData } from "../../utils/data";
+import React from "react";
+import Modal from "../modal/modal";
 
 // TODO there: replace num field by Symbol and fetch data from server
 const BurgerConstructor = () => {
-  
   // Currently hardcoded
   const numOfTestIngredients = 8;
   const totalNumberOfIngredients = ingredientsData.length;
@@ -19,9 +20,14 @@ const BurgerConstructor = () => {
     let randIndx = Math.floor(
       Math.random() * (totalNumberOfIngredients - 1) + 1
     );
-    testIngredients.push({num: i, ...ingredientsData[randIndx]});
+    testIngredients.push({ num: i, ...ingredientsData[randIndx] });
   }
 
+  const [visible, setVisible] = React.useState(false);
+
+  const toggleModal = () => {
+    setVisible(!visible);
+  };
   return (
     <div className={constructorStyles.mainBlock}>
       <div className={constructorStyles.allBurgerElements}>

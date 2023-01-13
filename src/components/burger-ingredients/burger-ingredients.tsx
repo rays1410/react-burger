@@ -1,20 +1,20 @@
 import React from "react";
 import { Link, Element } from "react-scroll";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
-import ingredientsData from "../../utils/data.js";
 import IngredientType from "../ingredient-type/ingredient-type";
 import ingredientStyles from "./burger-ingredients.module.css";
+import { IngredientObject, IngredientObjectArray } from "../../utils/interfaces";
 
 // Find all entries of ingredient type
 // For example, if typeName is 'bun', function returns array of all buns
 
-function findButchItems(typeName: string) {
+function findButchItems(typeName: string, ingredientsData: IngredientObject[]) {
+  // console.log(ingredientsData)
   return ingredientsData.filter((item) => item.type === typeName);
 }
 
-const BurgerIngredients = () => {
+const BurgerIngredients = ({ingredientsData}: IngredientObjectArray) => {
   const [current, setCurrent] = React.useState("bun");
-
   const mapRussianTitles = {
     bun: "Булки",
     sauce: "Соусы",
@@ -58,7 +58,11 @@ const BurgerIngredients = () => {
         className={ingredientStyles.ingredientSection}
       >
         {titlesEntries.map(([key, value]) => (
-          <IngredientType key={key} data={findButchItems(key)} typeName={key}>
+          <IngredientType
+            key={key}
+            data={findButchItems(key, ingredientsData)}
+            typeName={key}
+          >
             {value}
           </IngredientType>
         ))}

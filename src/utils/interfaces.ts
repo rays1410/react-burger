@@ -13,6 +13,11 @@ export interface IngredientObject {
   __v: number;
 }
 
+export interface IngredientObjectArray {
+  ingredientsData: IngredientObject[];
+}
+
+
 export interface IngredientCardType {
   ingredient: IngredientObject;
 }
