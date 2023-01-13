@@ -7,10 +7,10 @@ import { ModalTypes } from "../../utils/interfaces";
 const modalRoot = document.getElementById("react-modals") as HTMLElement;
 
 const Modal = ({ children, header, onClosed }: ModalTypes) => {
-  
   // Subscription on ESC button
   React.useEffect(() => {
     const close = (event: any) => {
+      // эту any я не знаю как решить, продолжу гуглить
       if (event.keyCode === 27) {
         onClosed();
       }

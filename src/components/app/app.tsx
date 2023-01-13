@@ -14,15 +14,19 @@ function App() {
 
   React.useEffect(() => {
     const getData = () => {
-      setState({ ...state, isLoading: true });
-      fetch(`${apiURL}`)
-        .then((res) => res.json())
-        .then((data) =>
-          setState({ ...state, ingredientsData: data.data, isLoading: false })
-        )
-        .catch((e) => {
-          setState({ ...state, isLoading: false, isError: true });
-        });
+      try {
+        setState({ ...state, isLoading: true });
+        fetch(`${apiURL}`)
+          .then((res) => res.json())
+          .then((data) =>
+            setState({ ...state, ingredientsData: data.data, isLoading: false })
+          )
+          .catch((e) => {
+            setState({ ...state, isLoading: false, isError: true });
+          });
+      } catch (e) {
+        console.log("Error, server does not response");
+      }
     };
     getData();
   }, []);
