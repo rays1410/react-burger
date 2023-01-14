@@ -4,31 +4,25 @@ import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import IngredientType from "../ingredient-type/ingredient-type";
 import ingredientStyles from "./burger-ingredients.module.css";
 import { IngredientObject, IngredientObjectArray } from "../../utils/interfaces";
+import {typeNameMapping} from "../../utils/constants"
 
 // Find all entries of ingredient type
 // For example, if typeName is 'bun', function returns array of all buns
 
 function findButchItems(typeName: string, ingredientsData: IngredientObject[]) {
-  // console.log(ingredientsData)
   return ingredientsData.filter((item) => item.type === typeName);
 }
 
 const BurgerIngredients = ({ingredientsData}: IngredientObjectArray) => {
-  const [current, setCurrent] = React.useState("bun");
-  const mapRussianTitles = {
-    bun: "Булки",
-    sauce: "Соусы",
-    main: "Начинки",
-  };
-
-  const titlesEntries = Object.entries(mapRussianTitles);
+  const [currentTab, setCurrentTab] = React.useState("bun");
+  const titlesEntries = Object.entries(typeNameMapping);
   return (
     <div className={ingredientStyles.mainBlock}>
       <p className={`${ingredientStyles.mainTitle} text text_type_main-large`}>
         Соберите бургер
       </p>
 
-      {/* Go throughout [key, value] of mapRussianTitles and draw tabs */}
+      {/* Go throughout [key, value] of ingredient types and draw tabs */}
       {/* We wrap each tab with <Link> to be able to move when we click on tab */}
       <div className={ingredientStyles.tabs}>
         {titlesEntries.map(([key]) => (
@@ -41,8 +35,8 @@ const BurgerIngredients = ({ingredientsData}: IngredientObjectArray) => {
             smooth={true}
             duration={500}
           >
-            <Tab value={key} active={current === key} onClick={setCurrent}>
-              {mapRussianTitles[key as keyof typeof mapRussianTitles]}
+            <Tab value={key} active={currentTab === key} onClick={setCurrentTab}>
+              {typeNameMapping[key as keyof typeof typeNameMapping]}
             </Tab>
           </Link>
         ))}

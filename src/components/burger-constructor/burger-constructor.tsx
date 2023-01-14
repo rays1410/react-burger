@@ -6,26 +6,25 @@ import {
 } from "@ya.praktikum/react-developer-burger-ui-components";
 
 import constructorStyles from "./burger-constructor.module.css";
-import { ingredientsData } from "../../utils/data";
 import React from "react";
 import Modal from "../modal/modal";
 import OrderDetails from "../order-details/order-details";
+import { IngredientObjectArray } from "../../utils/interfaces";
+import { getRandomIngredients, getTotalPrice } from "../../utils/utils";
+import { BUN_ID } from "../../utils/constants";
 
-// TODO there: replace num field by Symbol and fetch data from server
-const BurgerConstructor = () => {
+const BurgerConstructor = ({ ingredientsData }: IngredientObjectArray) => {
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const BUN =
+    ingredientsData.find((item) => item?._id === BUN_ID) || ingredientsData[0];
+
   // Currently hardcoded
   const numOfTestIngredients = 8;
-  const totalNumberOfIngredients = ingredientsData.length;
-  const testIngredients = [];
+  const currentIngredients = getRandomIngredients(
+    numOfTestIngredients,
+    ingredientsData
+  );
 
-  // Generate random set of ingredients in the constructor
-  for (let i = 0; i < numOfTestIngredients; i++) {
-    let randIndx = Math.floor(Math.random() * totalNumberOfIngredients);
-    testIngredients.push({ num: i, ...ingredientsData[randIndx] });
-  }
-
-  // State for modal window
-  const [modalVisible, setModalVisible] = React.useState(false);
   const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
@@ -34,24 +33,22 @@ const BurgerConstructor = () => {
     <>
       <div className={constructorStyles.mainBlock}>
         <div className={constructorStyles.allBurgerElements}>
-          {/* It seems that allBurgerElements level is redundant */}
-
           <ConstructorElement
             type="top"
             isLocked={true}
             text="Краторная булка N-200i (верх)"
-            price={200}
-            thumbnail={ingredientsData[1].image}
+            price={BUN?.price}
+            thumbnail={BUN?.image || ""}
           />
-          
+
           <div className={constructorStyles.dynamicBurgerElements}>
-            {testIngredients.map((item) => (
-              <div key={item.num} className={constructorStyles.burgerItem}>
+            {currentIngredients.map((item, indx) => (
+              <div key={indx} className={constructorStyles.burgerItem}>
                 <DragIcon type="primary" />
                 <ConstructorElement
-                  text={item.name}
-                  price={item.price}
-                  thumbnail={item.image}
+                  text={item?.name}
+                  price={item?.price}
+                  thumbnail={item?.image || ""}
                 />
               </div>
             ))}
@@ -61,14 +58,16 @@ const BurgerConstructor = () => {
             type="bottom"
             isLocked={true}
             text="Краторная булка N-200i (низ)"
-            price={200}
-            thumbnail={ingredientsData[1].image}
+            price={BUN?.price}
+            thumbnail={BUN?.image || ""}
           />
         </div>
 
         <div className={constructorStyles.priceAndOrder}>
           <div className={constructorStyles.price}>
-            <p className="text text_type_digits-medium">610</p>
+            <p className="text text_type_digits-medium">
+              {getTotalPrice(currentIngredients, BUN?.price) || 0}
+            </p>
             <CurrencyIcon type="primary" />
           </div>
           <Button
@@ -82,7 +81,7 @@ const BurgerConstructor = () => {
           </Button>
         </div>
       </div>
-      
+
       {modalVisible && (
         <Modal header={" "} onClosed={toggleModal}>
           <OrderDetails />

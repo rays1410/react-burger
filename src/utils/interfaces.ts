@@ -1,3 +1,5 @@
+import React from "react";
+
 export interface IngredientObject {
   _id: string;
   name: string;

@@ -1,21 +1,20 @@
-import modalStyles from "./modal.module.css";
+import React from "react";
 import ReactDOM from "react-dom";
 import { CloseIcon } from "@ya.praktikum/react-developer-burger-ui-components";
-import React from "react";
 import { ModalTypes } from "../../utils/interfaces";
+import { ESC_BUTTON } from "../../utils/constants";
+import modalStyles from "./modal.module.css";
 
 const modalRoot = document.getElementById("react-modals") as HTMLElement;
 
 const Modal = ({ children, header, onClosed }: ModalTypes) => {
   // Subscription on ESC button
   React.useEffect(() => {
-    const close = (event: any) => {
-      // эту any я не знаю как решить, продолжу гуглить
-      if (event.keyCode === 27) {
+    const close = (event: KeyboardEvent) => {
+      if (event.code === ESC_BUTTON) {
         onClosed();
       }
     };
-
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
   }, []);
