@@ -8,7 +8,7 @@ import IngredientDetails from "../ingredient-details/ingredient-details";
 // This component represents cards of ingredients that
 // we see in the left part of application
 
-const IngredientCard = ({ ingredient }: IngredientCardType) => {
+const IngredientCard = React.memo(({ ingredient }: IngredientCardType) => {
 
   // State for modal window
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -43,6 +43,6 @@ const IngredientCard = ({ ingredient }: IngredientCardType) => {
       )}
     </>
   );
-};
+});
 
 export default IngredientCard;
