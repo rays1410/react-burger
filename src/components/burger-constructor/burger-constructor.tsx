@@ -6,72 +6,88 @@ import {
 } from "@ya.praktikum/react-developer-burger-ui-components";
 
 import constructorStyles from "./burger-constructor.module.css";
-import { ingredientsData } from "../../utils/data";
+import React from "react";
+import Modal from "../modal/modal";
+import OrderDetails from "../order-details/order-details";
+import { IngredientObjectArray } from "../../utils/interfaces";
+import { getRandomIngredients, getTotalPrice } from "../../utils/utils";
+import { BUN_ID } from "../../utils/constants";
 
-// TODO there: replace num field by Symbol and fetch data from server
-const BurgerConstructor = () => {
-  
+const BurgerConstructor = ({ ingredientsData }: IngredientObjectArray) => {
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const BUN =
+    ingredientsData.find((item) => item?._id === BUN_ID) || ingredientsData[0];
+
   // Currently hardcoded
   const numOfTestIngredients = 8;
-  const totalNumberOfIngredients = ingredientsData.length;
-  const testIngredients = [];
-  for (let i = 0; i < numOfTestIngredients; i++) {
-    let randIndx = Math.floor(
-      Math.random() * (totalNumberOfIngredients - 1) + 1
-    );
-    testIngredients.push({num: i, ...ingredientsData[randIndx]});
-  }
+  const currentIngredients = getRandomIngredients(
+    numOfTestIngredients,
+    ingredientsData
+  );
+
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
+  };
 
   return (
-    <div className={constructorStyles.mainBlock}>
-      <div className={constructorStyles.allBurgerElements}>
-        {/* It seems that allBurgerElements level is redundant */}
+    <>
+      <div className={constructorStyles.mainBlock}>
+        <div className={constructorStyles.allBurgerElements}>
+          <ConstructorElement
+            type="top"
+            isLocked={true}
+            text="Краторная булка N-200i (верх)"
+            price={BUN?.price}
+            thumbnail={BUN?.image || ""}
+          />
 
-        <ConstructorElement
-          type="top"
-          isLocked={true}
-          text="Краторная булка N-200i (верх)"
-          price={200}
-          thumbnail={ingredientsData[1].image}
-        />
+          <div className={constructorStyles.dynamicBurgerElements}>
+            {currentIngredients.map((item, indx) => (
+              <div key={indx} className={constructorStyles.burgerItem}>
+                <DragIcon type="primary" />
+                <ConstructorElement
+                  text={item?.name}
+                  price={item?.price}
+                  thumbnail={item?.image || ""}
+                />
+              </div>
+            ))}
+          </div>
 
-        <div className={constructorStyles.dynamicBurgerElements}>
-          {testIngredients.map((item) => (
-            <div key={item.num} className={constructorStyles.burgerItem}>
-              <DragIcon type="primary" />
-              <ConstructorElement
-                text={item.name}
-                price={item.price}
-                thumbnail={item.image}
-              />
-            </div>
-          ))}
+          <ConstructorElement
+            type="bottom"
+            isLocked={true}
+            text="Краторная булка N-200i (низ)"
+            price={BUN?.price}
+            thumbnail={BUN?.image || ""}
+          />
         </div>
 
-        <ConstructorElement
-          type="bottom"
-          isLocked={true}
-          text="Краторная булка N-200i (низ)"
-          price={200}
-          thumbnail={ingredientsData[1].image}
-        />
+        <div className={constructorStyles.priceAndOrder}>
+          <div className={constructorStyles.price}>
+            <p className="text text_type_digits-medium">
+              {getTotalPrice(currentIngredients, BUN?.price) || 0}
+            </p>
+            <CurrencyIcon type="primary" />
+          </div>
+          <Button
+            htmlType="button"
+            type="primary"
+            size="large"
+            extraClass="ml-10"
+            onClick={toggleModal}
+          >
+            Оформить заказ
+          </Button>
+        </div>
       </div>
 
-      <div className={constructorStyles.priceAndOrder}>
-        <div className={constructorStyles.price}>
-          <p className="text text_type_digits-medium">610</p>
-          <CurrencyIcon type="primary" />
-        </div>
-        <Button
-          htmlType="button"
-          type="primary"
-          size="large"
-          extraClass="ml-10"
-        >
-          Оформить заказ
-        </Button>
-      </div>
-    </div>
+      {modalVisible && (
+        <Modal header={" "} onClosed={toggleModal}>
+          <OrderDetails />
+        </Modal>
+      )}
+    </>
   );
 };
 
