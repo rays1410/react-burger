@@ -1,4 +1,3 @@
-import React from "react";
 import ingredientDetailsStyles from "./ingredient-details.module.css";
 import { nutrientsNameMapping } from "../../utils/constants";
 import { IngredientCardType, IngredientObject } from "../../utils/interfaces";

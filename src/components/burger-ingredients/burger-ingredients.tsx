@@ -14,22 +14,21 @@ function findButchItems(typeName: string, ingredientsData: IngredientObject[]) {
 
 const BurgerIngredients = ({ingredientsData}: IngredientObjectArray) => {
   const [currentTab, setCurrentTab] = React.useState("bun");
-  const [sortedIngredients, setSortedIngredients] = React.useState({});
+  // const [sortedIngredients, setSortedIngredients] = React.useState({});
   
   const titlesEntries = Object.entries(typeNameMapping);
 
   // This hook takes all possible types of ingredients and puts them into the array,
   // which contains objects like: {'type_name': [list_of_ingredients_of_this_type]}
-  // It triggers only if data is changed or because of first render
+  // It triggers only if data is changed or because of  first render
 
-  React.useEffect(() => {
-    const sortedIngredients = titlesEntries.map(([key], indx) => (
-        Object.fromEntries([[key, findButchItems(key, ingredientsData)]])
-    ))
-    setSortedIngredients(sortedIngredients)
-  }, [ingredientsData])
+  // React.useEffect(() => {
+  //   const sortedIngredients = titlesEntries.map(([key], indx) => (
+  //       Object.fromEntries([[key, findButchItems(key, ingredientsData)]])
+  //   ))
+  //   setSortedIngredients(sortedIngredients)
+  // }, [ingredientsData])
 
-  console.log("render")
   return (
     <div className={ingredientStyles.mainBlock}>
       <p className={`${ingredientStyles.mainTitle} text text_type_main-large`}>
