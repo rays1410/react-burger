@@ -22,6 +22,7 @@ const IngredientCard = React.memo(({ ingredient }: IngredientCardType) => {
         className={ingredientCardStyles.ingredientCard}
         onClick={toggleModal}
       >
+        {/* <div className={`${ingredientCardStyles.cardCounter} text text_type_digits-default`}>1</div> */}
         <img
           src={ingredient.image}
           className={ingredientCardStyles.cardImg}
