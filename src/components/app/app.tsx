@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import AppHeader from "../app-header/app-header";
 import appStyles from "./app.module.css";
 import BurgerConstructor from "../burger-constructor/burger-constructor";
@@ -6,10 +6,10 @@ import BurgerIngredients from "../burger-ingredients/burger-ingredients";
 import { apiURL } from "../../utils/constants";
 import { getData } from "../../utils/utils";
 
+
 function App() {
-  
   // State for the data
-  const [dataState, setDataState] = React.useState({
+  const [dataState, setDataState] = useState({
     isLoading: false,
     isError: false,
     ingredientsData: [],
