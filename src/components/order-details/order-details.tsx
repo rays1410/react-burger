@@ -2,7 +2,7 @@ import React from "react";
 import orderDetailsStyles from "./order-details.module.css";
 import doneIcon from "../../images/done.svg";
 
-const OrderDetails = ({ children }: { children: string }) => {
+const OrderDetails = ({ children }: { children: string | number }) => {
   return (
     <div className={orderDetailsStyles.modalContent}>
       <p

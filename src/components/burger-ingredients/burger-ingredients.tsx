@@ -1,10 +1,10 @@
-import { useContext, useState, useEffect, useMemo } from "react";
+import { useContext, useState, useMemo } from "react";
 import { Link, Element } from "react-scroll";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import IngredientType from "../ingredient-type/ingredient-type";
 import ingredientStyles from "./burger-ingredients.module.css";
 import { IngredientObject } from "../../utils/interfaces";
-import { typeNameMapping } from "../../utils/constants";
+import { titlesEntries } from "../../utils/constants";
 import { DataContext } from "../../services/appContext";
 import { DataContextType } from "../../services/appContext.interfaces";
 
@@ -17,7 +17,6 @@ function findButchItems(typeName: string, ingredientsData: IngredientObject[]) {
 const BurgerIngredients = () => {
   const [currentTab, setCurrentTab] = useState("bun");
   const { dataState } = useContext(DataContext) as DataContextType;
-  const titlesEntries = Object.entries(typeNameMapping);
 
   // Memoize ingredients list
   const content = useMemo(() => {
@@ -42,7 +41,7 @@ const BurgerIngredients = () => {
       {/* We wrap each tab with <Link> to be able to move when we click on tab */}
 
       <div className={ingredientStyles.tabs}>
-        {titlesEntries.map(([key]) => (
+        {titlesEntries.map(([key, value]) => (
           <Link
             key={key}
             activeClass="active"
@@ -57,7 +56,7 @@ const BurgerIngredients = () => {
               active={currentTab === key}
               onClick={setCurrentTab}
             >
-              {typeNameMapping[key as keyof typeof typeNameMapping]}
+              {value}
             </Tab>
           </Link>
         ))}

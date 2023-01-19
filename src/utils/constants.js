@@ -11,11 +11,11 @@ export const nutrientsNameMapping = {
   carbohydrates: "Углеводы, г",
 };
 
-export const typeNameMapping = {
+export const titlesEntries = Object.entries({
   bun: "Булки",
   sauce: "Соусы",
   main: "Начинки",
-};
+});
 
 export const CONSTANT_BUN = {
   _id: "60666c42cc7b410027a1a9b1",

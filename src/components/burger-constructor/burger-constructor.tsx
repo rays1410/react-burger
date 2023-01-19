@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
   Button,
   ConstructorElement,
@@ -22,8 +21,8 @@ const BurgerConstructor = () => {
   // кликом, я буду проводить проверку ингредиента на булковость и, если это булка,
   // буду менять это состояние. Кажется это лучше, чем постоянно
   // бегать по массиву ингредиентов в конструкторе в поисках нескольких булок.
-  const [currentBun, setCurrentBun] = useState(CONSTANT_BUN);
-  const { dataState } = useContext(DataContext) as DataContextType;
+  const [currentBun] = useState(CONSTANT_BUN);
+  const { dataState } = useContext<DataContextType>(DataContext);
 
   // Currently hardcoded
   // Сейчас в случайный массив может попасть несколько булок.
@@ -39,8 +38,9 @@ const BurgerConstructor = () => {
   const [modalVisible, setModalVisible] = useToggle(false);
 
   // Custom hook for order checkout
-  const { execute, status, error, orderNum } = useOrder(
+  const { execute, orderNum } = useOrder(
     currentIngredients,
+    currentBun,
     ORDER_URL,
     setModalVisible
   );
@@ -59,7 +59,6 @@ const BurgerConstructor = () => {
           <ConstructorElement
             type="top"
             isLocked={true}
-            //text="Краторная булка N-200i (верх)"
             text={currentBun.name + " (верх)"}
             price={currentBun.price}
             thumbnail={currentBun.image || ""}
