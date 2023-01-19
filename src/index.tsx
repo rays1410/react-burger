@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './components/app/app';
-import reportWebVitals from './reportWebVitals';
 import "@ya.praktikum/react-developer-burger-ui-components/"
 
 const root = ReactDOM.createRoot(
@@ -15,4 +14,3 @@ root.render(
   </React.StrictMode>
 );
 
-// reportWebVitals();

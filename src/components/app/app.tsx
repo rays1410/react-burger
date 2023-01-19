@@ -16,20 +16,28 @@ function App() {
   });
 
   useEffect(() => {
-    setDataState({ ...dataState, isLoading: true });
+    setDataState((dataState) => ({ ...dataState, isLoading: true }));
     getData(INGREDIENTS_URL)
       .then(({ data }) =>
-        setDataState({ ...dataState, ingredientsData: data, isLoading: false })
+        setDataState((dataState) => ({
+          ...dataState,
+          ingredientsData: data,
+          isLoading: false,
+        }))
       )
       .catch((e) =>
-        setDataState({ ...dataState, isLoading: false, isError: true })
-      );
-
-    // TODO: у меня не получилось вырубить warning на 19 строчке,
-    // ругается на отсутствие dataState в зависимостях. Пробовал через
-    // передачу колбэка, вот так -> setDataState(() => {}) - не сработало
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        setDataState((dataState) => ({
+          ...dataState,
+          isLoading: false,
+          isError: true,
+        }))
+      )
+      .finally(() => {
+        setDataState((dataState) => ({
+          ...dataState,
+          isLoading: false,
+        }));
+      });
   }, []);
 
   return (
