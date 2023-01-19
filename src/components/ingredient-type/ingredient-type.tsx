@@ -7,20 +7,20 @@ import { Element } from "react-scroll";
 
 const IngredientType = ({ children, data, typeName }: IngredientTypeTypes) => {
   return (
-    <div>
-      <Element name={typeName}>
+    <Element name={typeName}>
+      <div>
         <p
           className={`${ingredientStyles.butchTitle} text text_type_main-medium`}
         >
           {children}
         </p>
-      </Element>
-      <div className={ingredientStyles.ingredientsButch}>
-        {data.map((item: IngredientObject) => {
-          return <IngredientCard key={item._id} ingredient={item} />;
-        })}
+        <div className={ingredientStyles.ingredientsButch}>
+          {data.map((item: IngredientObject) => {
+            return <IngredientCard key={item._id} ingredient={item} />;
+          })}
+        </div>
       </div>
-    </div>
+    </Element>
   );
 };
 

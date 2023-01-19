@@ -1,4 +1,11 @@
-export const getData = (state, setState, apiURL) => {
+import { IngredientObject } from "./interfaces";
+import { DataStateInterface } from "../services/appContext.interfaces";
+
+export const getData = (
+  state: DataStateInterface,
+  setState: React.Dispatch<React.SetStateAction<DataStateInterface>>,
+  apiURL: string
+) => {
   try {
     setState({ ...state, isLoading: true });
     fetch(apiURL)
@@ -16,7 +23,7 @@ export const getData = (state, setState, apiURL) => {
   }
 };
 
-export const randIndxArray = (numInidices, maxIndx) => {
+export const randIndxArray = (numInidices: number, maxIndx: number) => {
   const resultVector = [];
   let randIndx;
   for (let i = 0; i < numInidices; i++) {
@@ -27,18 +34,15 @@ export const randIndxArray = (numInidices, maxIndx) => {
   return resultVector;
 };
 
-export const getRandomIngredients = (numElements, ingredientsData) => {
+export const getRandomIngredients = (
+  numElements: number,
+  ingredientsData: IngredientObject[]
+) => {
   const totalIngredientsNum = ingredientsData.length;
+
   // const randomIndices = randIndxArray(numElements, totalIngredientsNum);
   const randomIndices = [5, 6, 5, 7, 8, 4]; //
+
   const ingredients = randomIndices.map((item) => ingredientsData[item]);
   return ingredients;
-};
-
-// Get total price of all constructor ingredients
-export const getTotalPrice = (currentIngredients, bunPrice) => {
-  return currentIngredients.reduce(
-    (totalPrice, item) => (totalPrice += item?.price),
-    bunPrice * 2
-  );
 };

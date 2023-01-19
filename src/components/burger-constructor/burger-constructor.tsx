@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
   Button,
   ConstructorElement,
@@ -6,27 +7,49 @@ import {
 } from "@ya.praktikum/react-developer-burger-ui-components";
 
 import constructorStyles from "./burger-constructor.module.css";
-import React from "react";
+import { useContext, useState } from "react";
 import Modal from "../modal/modal";
 import OrderDetails from "../order-details/order-details";
-import { IngredientObjectArray } from "../../utils/interfaces";
-import { getRandomIngredients, getTotalPrice } from "../../utils/utils";
-import { BUN_ID } from "../../utils/constants";
+import { getRandomIngredients } from "../../utils/utils";
+import { CONSTANT_BUN, ORDER_URL } from "../../utils/constants";
+import { DataContext } from "../../services/appContext";
+import { DataContextType } from "../../services/appContext.interfaces";
+import useToggle from "../../hooks/useToggle";
+import useOrder from "../../hooks/useOrder";
 
-const BurgerConstructor = ({ ingredientsData }: IngredientObjectArray) => {
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const BUN =
-    ingredientsData.find((item) => item?._id === BUN_ID) || ingredientsData[0];
+const BurgerConstructor = () => {
+  // Булка захардкожена. В дальшейшем, когда можно будет выбирать ингредиенты
+  // кликом, я буду проводить проверку ингредиента на булковость и, если это булка,
+  // буду менять это состояние. Кажется это лучше, чем постоянно
+  // бегать по массиву ингредиентов в конструкторе в поисках нескольких булок.
+  const [currentBun, setCurrentBun] = useState(CONSTANT_BUN);
+  const { dataState } = useContext(DataContext) as DataContextType;
 
   // Currently hardcoded
+  // Сейчас в случайный массив может попасть несколько булок.
+  // Это исправится само собой в будущем, как и написано выше,
+  // так что, надеюсь, это не проблема.
   const numOfTestIngredients = 8;
   const currentIngredients = getRandomIngredients(
     numOfTestIngredients,
-    ingredientsData
+    dataState.ingredientsData
   );
 
-  const toggleModal = () => {
-    setModalVisible(!modalVisible);
+  // Toggle for the modal window
+  const [modalVisible, setModalVisible] = useToggle(false);
+
+  // Custom hook for order checkout
+  const { execute, status, error, orderNum } = useOrder(
+    currentIngredients,
+    ORDER_URL,
+    setModalVisible
+  );
+
+  const totalPrice = () => {
+    return currentIngredients.reduce(
+      (totalPrice, item) => (totalPrice += item?.price),
+      currentBun.price * 2
+    );
   };
 
   return (
@@ -36,9 +59,10 @@ const BurgerConstructor = ({ ingredientsData }: IngredientObjectArray) => {
           <ConstructorElement
             type="top"
             isLocked={true}
-            text="Краторная булка N-200i (верх)"
-            price={BUN?.price}
-            thumbnail={BUN?.image || ""}
+            //text="Краторная булка N-200i (верх)"
+            text={currentBun.name + " (верх)"}
+            price={currentBun.price}
+            thumbnail={currentBun.image || ""}
           />
 
           <div className={constructorStyles.dynamicBurgerElements}>
@@ -57,17 +81,15 @@ const BurgerConstructor = ({ ingredientsData }: IngredientObjectArray) => {
           <ConstructorElement
             type="bottom"
             isLocked={true}
-            text="Краторная булка N-200i (низ)"
-            price={BUN?.price}
-            thumbnail={BUN?.image || ""}
+            text={currentBun.name + " (низ)"}
+            price={currentBun.price}
+            thumbnail={currentBun.image || ""}
           />
         </div>
 
         <div className={constructorStyles.priceAndOrder}>
           <div className={constructorStyles.price}>
-            <p className="text text_type_digits-medium">
-              {getTotalPrice(currentIngredients, BUN?.price) || 0}
-            </p>
+            <p className="text text_type_digits-medium">{totalPrice() || 0}</p>
             <CurrencyIcon type="primary" />
           </div>
           <Button
@@ -75,7 +97,7 @@ const BurgerConstructor = ({ ingredientsData }: IngredientObjectArray) => {
             type="primary"
             size="large"
             extraClass="ml-10"
-            onClick={toggleModal}
+            onClick={execute}
           >
             Оформить заказ
           </Button>
@@ -83,8 +105,8 @@ const BurgerConstructor = ({ ingredientsData }: IngredientObjectArray) => {
       </div>
 
       {modalVisible && (
-        <Modal header={" "} onClosed={toggleModal}>
-          <OrderDetails />
+        <Modal header={" "} onClosed={setModalVisible}>
+          <OrderDetails>{orderNum}</OrderDetails>
         </Modal>
       )}
     </>

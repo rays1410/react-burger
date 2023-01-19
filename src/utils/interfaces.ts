@@ -19,7 +19,6 @@ export interface IngredientObjectArray {
   ingredientsData: IngredientObject[];
 }
 
-
 export interface IngredientCardType {
   ingredient: IngredientObject;
 }

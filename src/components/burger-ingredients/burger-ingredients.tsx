@@ -1,10 +1,12 @@
-import React, { useEffect } from "react";
+import { useContext, useState, useEffect, useMemo } from "react";
 import { Link, Element } from "react-scroll";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import IngredientType from "../ingredient-type/ingredient-type";
 import ingredientStyles from "./burger-ingredients.module.css";
-import { IngredientObject, IngredientObjectArray } from "../../utils/interfaces";
-import {typeNameMapping} from "../../utils/constants"
+import { IngredientObject } from "../../utils/interfaces";
+import { typeNameMapping } from "../../utils/constants";
+import { DataContext } from "../../services/appContext";
+import { DataContextType } from "../../services/appContext.interfaces";
 
 // Find all entries of ingredient type
 // For example, if typeName is 'bun', function returns array of all buns
@@ -12,22 +14,23 @@ function findButchItems(typeName: string, ingredientsData: IngredientObject[]) {
   return ingredientsData.filter((item) => item.type === typeName);
 }
 
-const BurgerIngredients = ({ingredientsData}: IngredientObjectArray) => {
-  const [currentTab, setCurrentTab] = React.useState("bun");
-  // const [sortedIngredients, setSortedIngredients] = React.useState({});
-  
+const BurgerIngredients = () => {
+  const [currentTab, setCurrentTab] = useState("bun");
+  const { dataState } = useContext(DataContext) as DataContextType;
   const titlesEntries = Object.entries(typeNameMapping);
 
-  // This hook takes all possible types of ingredients and puts them into the array,
-  // which contains objects like: {'type_name': [list_of_ingredients_of_this_type]}
-  // It triggers only if data is changed or because of  first render
-
-  // React.useEffect(() => {
-  //   const sortedIngredients = titlesEntries.map(([key], indx) => (
-  //       Object.fromEntries([[key, findButchItems(key, ingredientsData)]])
-  //   ))
-  //   setSortedIngredients(sortedIngredients)
-  // }, [ingredientsData])
+  // Memoize ingredients list
+  const content = useMemo(() => {
+    return titlesEntries.map(([key, value]) => (
+      <IngredientType
+        key={key}
+        data={findButchItems(key, dataState.ingredientsData)}
+        typeName={key}
+      >
+        {value}
+      </IngredientType>
+    ));
+  }, [dataState.ingredientsData]);
 
   return (
     <div className={ingredientStyles.mainBlock}>
@@ -37,6 +40,7 @@ const BurgerIngredients = ({ingredientsData}: IngredientObjectArray) => {
 
       {/* Go throughout [key, value] of ingredient types and draw tabs */}
       {/* We wrap each tab with <Link> to be able to move when we click on tab */}
+
       <div className={ingredientStyles.tabs}>
         {titlesEntries.map(([key]) => (
           <Link
@@ -48,7 +52,11 @@ const BurgerIngredients = ({ingredientsData}: IngredientObjectArray) => {
             smooth={true}
             duration={500}
           >
-            <Tab value={key} active={currentTab === key} onClick={setCurrentTab}>
+            <Tab
+              value={key}
+              active={currentTab === key}
+              onClick={setCurrentTab}
+            >
               {typeNameMapping[key as keyof typeof typeNameMapping]}
             </Tab>
           </Link>
@@ -64,15 +72,7 @@ const BurgerIngredients = ({ingredientsData}: IngredientObjectArray) => {
         id="ingredientsContainer"
         className={ingredientStyles.ingredientSection}
       >
-        {titlesEntries.map(([key, value]) => (
-          <IngredientType
-            key={key}
-            data={findButchItems(key, ingredientsData)}
-            typeName={key}
-          >
-            {value}
-          </IngredientType>
-        ))}
+        {content}
       </Element>
     </div>
   );
