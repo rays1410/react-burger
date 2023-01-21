@@ -5,7 +5,7 @@ import { IngredientCardType, IngredientObject } from "../../utils/interfaces";
 const IngredientDetails = ({ ingredient }: IngredientCardType) => {
   return (
     <div className={ingredientDetailsStyles.modalContent}>
-      <img src={ingredient.image_large} className={`mb-4`} />
+      <img src={ingredient.image_large} className={`mb-4`} alt="картинка ингредиента"/>
       <p className="text text_type_main-medium mb-5">{ingredient.name}</p>
       <div className={ingredientDetailsStyles.bottomTable}>
         {Object.entries(nutrientsNameMapping).map(([key, value]) => (

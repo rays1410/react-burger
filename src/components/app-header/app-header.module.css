@@ -41,3 +41,7 @@ a {
   color: #f2f2f3;
   text-decoration: none;
 }
+
+a.disabled {
+  pointer-events: none;
+}
