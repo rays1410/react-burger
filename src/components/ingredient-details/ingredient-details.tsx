@@ -1,12 +1,24 @@
 import ingredientDetailsStyles from "./ingredient-details.module.css";
 import { nutrientsNameMapping } from "../../utils/constants";
 import { IngredientCardType, IngredientObject } from "../../utils/interfaces";
+import { useAppSelector } from "../..";
 
-const IngredientDetails = ({ ingredient }: IngredientCardType) => {
-  return (
+// const IngredientDetails = ({ ingredient }: IngredientCardType) => {
+const IngredientDetails = () => {
+
+  // Вытаскиваем ингредиент, который будем показывать в модалке
+  const modalIngredient = useAppSelector(
+    (state) => state.ingredients.modalIngredient
+  );
+
+  return modalIngredient ? (
     <div className={ingredientDetailsStyles.modalContent}>
-      <img src={ingredient.image_large} className={`mb-4`} alt="картинка ингредиента"/>
-      <p className="text text_type_main-medium mb-5">{ingredient.name}</p>
+      <img
+        src={modalIngredient.image_large}
+        className={`mb-4`}
+        alt="картинка ингредиента"
+      />
+      <p className="text text_type_main-medium mb-5">{modalIngredient.name}</p>
       <div className={ingredientDetailsStyles.bottomTable}>
         {Object.entries(nutrientsNameMapping).map(([key, value]) => (
           <div key={key} className={ingredientDetailsStyles.tableItem}>
@@ -14,12 +26,14 @@ const IngredientDetails = ({ ingredient }: IngredientCardType) => {
               {value}
             </p>
             <p className={`text text_type_digits-default text_color_inactive`}>
-              {ingredient[key as keyof IngredientObject]}
+              {modalIngredient[key as keyof IngredientObject]}
             </p>
           </div>
         ))}
       </div>
     </div>
+  ) : (
+    <div>Ошибка</div>
   );
 };
 

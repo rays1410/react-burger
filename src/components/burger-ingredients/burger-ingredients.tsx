@@ -5,8 +5,7 @@ import IngredientType from "../ingredient-type/ingredient-type";
 import ingredientStyles from "./burger-ingredients.module.css";
 import { IngredientObject } from "../../utils/interfaces";
 import { titlesEntries } from "../../utils/constants";
-import { DataContext } from "../../services/appContext";
-import { DataContextType } from "../../services/appContext.interfaces";
+import { useAppSelector } from "../..";
 
 // Find all entries of ingredient type
 // For example, if typeName is 'bun', function returns array of all buns
@@ -16,20 +15,24 @@ function findButchItems(typeName: string, ingredientsData: IngredientObject[]) {
 
 const BurgerIngredients = () => {
   const [currentTab, setCurrentTab] = useState("bun");
-  const { dataState } = useContext(DataContext) as DataContextType;
 
-  // Memoize ingredients list
+  // Получаем ингредиенты из хранилища
+  const ingredientsData = useAppSelector(
+    (state) => state.ingredients.ingredientsData
+  );
+
+  // Мемоизируем ингредиенты
   const content = useMemo(() => {
     return titlesEntries.map(([key, value]) => (
       <IngredientType
         key={key}
-        data={findButchItems(key, dataState.ingredientsData)}
+        data={findButchItems(key, ingredientsData)}
         typeName={key}
       >
         {value}
       </IngredientType>
     ));
-  }, [dataState.ingredientsData]);
+  }, [ingredientsData]);
 
   return (
     <div className={ingredientStyles.mainBlock}>

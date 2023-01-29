@@ -15,9 +15,9 @@ const IngredientType = ({ children, data, typeName }: IngredientTypeTypes) => {
           {children}
         </p>
         <div className={ingredientStyles.ingredientsButch}>
-          {data.map((item: IngredientObject) => {
-            return <IngredientCard key={item._id} ingredient={item} />;
-          })}
+          {data.map((item: IngredientObject) => 
+            <IngredientCard key={item._id} ingredient={item} />
+          )}
         </div>
       </div>
     </Element>

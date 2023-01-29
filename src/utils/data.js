@@ -1,4 +1,4 @@
-export const ingredientsData = [
+export const hardcodedData = [
   {
     _id: "60666c42cc7b410027a1a9b1",
     name: "Краторная булка N-200i",
@@ -213,4 +213,4 @@ export const ingredientsData = [
   },
 ];
 
-export default ingredientsData;
+// export default hardcodedData;
