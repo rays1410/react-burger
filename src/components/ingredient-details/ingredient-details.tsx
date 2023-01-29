@@ -1,6 +1,6 @@
 import ingredientDetailsStyles from "./ingredient-details.module.css";
 import { nutrientsNameMapping } from "../../utils/constants";
-import { IngredientCardType, IngredientObject } from "../../utils/interfaces";
+import { IngredientObject } from "../../utils/interfaces";
 import { useAppSelector } from "../..";
 
 // const IngredientDetails = ({ ingredient }: IngredientCardType) => {

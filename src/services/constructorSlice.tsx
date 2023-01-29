@@ -4,11 +4,8 @@ import {
   PayloadAction,
   nanoid,
 } from "@reduxjs/toolkit";
-import { getData, getRandomIngredients } from "../utils/utils";
 import { ORDER_URL } from "../utils/constants";
 import { IngredientObject } from "../utils/interfaces";
-import { useAppSelector } from "..";
-import { hardcodedData } from "../utils/data";
 import axios from "axios";
 
 export interface ConstructorItem {
@@ -90,7 +87,6 @@ const constructorSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(sendOrderRequest.pending, (state, action) => {
-        console.log("loading");
         state.status = "loading";
       })
       .addCase(sendOrderRequest.fulfilled, (state, action) => {

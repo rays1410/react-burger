@@ -1,8 +1,6 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import {
-  Button,
   ConstructorElement,
-  CurrencyIcon,
   DragIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import draggableConstructorElementStyles from "./draggable-constructor-element.module.css";
