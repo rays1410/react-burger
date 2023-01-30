@@ -1,4 +1,4 @@
-import { useState, useMemo} from "react";
+import { useState, useMemo } from "react";
 import { Link, Element } from "react-scroll";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import IngredientType from "../ingredient-type/ingredient-type";
@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import { setModalIngredient } from "../../services/ingredientSlice";
 import IngredientDetails from "../ingredient-details/ingredient-details";
 import useToggle from "../../hooks/useToggle";
+import Modal from "../modal/modal";
 
 // Find all entries of ingredient type
 // For example, if typeName is 'bun', function returns array of all buns
@@ -25,11 +26,9 @@ const BurgerIngredients = () => {
   const [modalVisible, setModalVisible] = useToggle(false);
   const dispatch = useDispatch();
 
-  const ingredientClickHandler = (
-    ingredient: IngredientObject
-  ) => {
+  const ingredientClickHandler = (ingredient: IngredientObject) => {
     dispatch(setModalIngredient(ingredient));
-    setModalVisible(!modalVisible)
+    setModalVisible(!modalVisible);
   };
 
   // Получаем ингредиенты из хранилища
@@ -96,9 +95,9 @@ const BurgerIngredients = () => {
       </Element>
 
       {modalVisible && (
-        <ModalOverlay header={"Детали ингредиента"} onClosed={setModalVisible}>
+        <Modal header={"Детали ингредиента"} onClosed={setModalVisible}>
           <IngredientDetails />
-        </ModalOverlay>
+        </Modal>
       )}
     </main>
   );

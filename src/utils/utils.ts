@@ -7,9 +7,14 @@ export const getData = async (url: string) =>
       res.data.success
         ? res.data
         : res.data.then((err: any) => Promise.reject(err))
-    )
-    .catch((error) => {
-      console.log(error);
+    );
+
+export const postOrder = async (url: string, idArray: string[]) => {
+  return axios
+    .post(url, {
+      ingredients: idArray,
+    })
+    .then((res: any) => {
+      return res.data.success ? res.data.order.number : 0;
     });
-
-
+};

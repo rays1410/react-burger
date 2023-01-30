@@ -7,6 +7,7 @@ import {
 import { BASE_URL } from "../utils/constants";
 import { IngredientObject } from "../utils/interfaces";
 import axios from "axios";
+import { postOrder } from "../utils/utils";
 export interface ConstructorItem {
   id: string;
   ingredient: IngredientObject;
@@ -112,18 +113,7 @@ const constructorSlice = createSlice({
   },
 });
 
-export const postOrder = async (url: string, idArray: string[]) => {
-  return axios
-    .post(url, {
-      ingredients: idArray,
-    })
-    .then((res: any) => {
-      return res.data.success ? res.data.order.number : 0;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
+
 
 export const sendOrderRequest = createAsyncThunk(
   "order/sendOrder",

@@ -37,3 +37,8 @@ export interface ModalTypes {
   onClosed: any;
 }
 
+export interface ModalOverlayTypes {
+  children: React.ReactNode;
+  onClosed: any;
+}
+
