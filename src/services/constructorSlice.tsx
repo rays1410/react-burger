@@ -4,7 +4,6 @@ import {
   PayloadAction,
   nanoid,
 } from "@reduxjs/toolkit";
-import { useDispatch } from "react-redux";
 import { BASE_URL } from "../utils/constants";
 import { IngredientObject } from "../utils/interfaces";
 import axios from "axios";
@@ -85,7 +84,6 @@ const constructorSlice = createSlice({
     },
 
     setModalStatus: (state, action) => {
-      console.log(action.payload)
       state.modalStatus = action.payload;
     },
 

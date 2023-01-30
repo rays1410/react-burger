@@ -1,15 +1,12 @@
 import orderDetailsStyles from "./order-details.module.css";
 import doneIcon from "../../images/done.svg";
 import { useAppSelector } from "../..";
-import { ORDER_NUMBER_LOADING } from "../../utils/constants";
 import React from "react";
 
 const OrderDetails = React.memo(() => {
   const { modalStatus, orderNumber } = useAppSelector(
     (state) => state.burgerConstructor
   );
-  // const isBunEmpty = !Object.keys(currentBun).length;
-  // const isOrderSuccess = status === "succeeded";
 
   const modalContent = (
     <>

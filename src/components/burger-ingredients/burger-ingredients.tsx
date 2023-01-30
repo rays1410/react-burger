@@ -1,4 +1,4 @@
-import { useState, useMemo, MouseEventHandler } from "react";
+import { useState, useMemo} from "react";
 import { Link, Element } from "react-scroll";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import IngredientType from "../ingredient-type/ingredient-type";

@@ -22,8 +22,9 @@ import ModalOverlay from "../modal-overlay/modal-overlay";
 
 const BurgerConstructor = () => {
   // Достаем текущее состояние конструктора
-  const { currentIngredients, currentBun, totalPrice } =
-    useAppSelector((state) => state.burgerConstructor);
+  const { currentIngredients, currentBun, totalPrice } = useAppSelector(
+    (state) => state.burgerConstructor
+  );
   const dispatch = useDispatch<AppDispatch>();
 
   // Хук дропа карточек в конструктор

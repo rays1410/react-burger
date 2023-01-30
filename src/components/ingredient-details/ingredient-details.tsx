@@ -3,7 +3,6 @@ import { nutrientsNameMapping } from "../../utils/constants";
 import { IngredientObject } from "../../utils/interfaces";
 import { useAppSelector } from "../..";
 
-// const IngredientDetails = ({ ingredient }: IngredientCardType) => {
 const IngredientDetails = () => {
 
   // Вытаскиваем ингредиент, который будем показывать в модалке
