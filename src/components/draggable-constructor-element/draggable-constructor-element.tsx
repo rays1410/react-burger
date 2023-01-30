@@ -56,8 +56,8 @@ const DraggableConstructorElement = ({
       if (!ref.current) {
         return;
       }
-      const dragIndex = item.index;
 
+      const dragIndex = item.index;
       const hoverIndex = index;
 
       if (dragIndex === hoverIndex) {

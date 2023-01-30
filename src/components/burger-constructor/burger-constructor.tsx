@@ -5,21 +5,25 @@ import {
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import DraggableConstructorElement from "../draggable-constructor-element/draggable-constructor-element";
 import constructorStyles from "./burger-constructor.module.css";
-import Modal from "../modal/modal";
 import OrderDetails from "../order-details/order-details";
 import useToggle from "../../hooks/useToggle";
-import { addIngredient, calculateTotalPrice, setBun } from "../../services/constructorSlice";
+import {
+  addIngredient,
+  calculateTotalPrice,
+  setBun,
+  setModalStatus,
+} from "../../services/constructorSlice";
 import { AppDispatch, useAppSelector } from "../../index";
 import { useDispatch } from "react-redux";
 import { useDrop } from "react-dnd/dist/hooks";
 import { IngredientObject } from "../../utils/interfaces";
 import { sendOrderRequest } from "../../services/constructorSlice";
+import ModalOverlay from "../modal-overlay/modal-overlay";
 
 const BurgerConstructor = () => {
   // Достаем текущее состояние конструктора
-  const { currentIngredients, currentBun, orderNumber, totalPrice } =
+  const { currentIngredients, currentBun, totalPrice } =
     useAppSelector((state) => state.burgerConstructor);
-
   const dispatch = useDispatch<AppDispatch>();
 
   // Хук дропа карточек в конструктор
@@ -34,12 +38,16 @@ const BurgerConstructor = () => {
   const onDropHandler = (ingredient: IngredientObject) => {
     // Если дропнутый ингредиент - булка, то меняем булку,
     // иначе - добавляем ингредиент
-    ingredient.type === "bun"
-      ? dispatch(setBun(ingredient))
-      : dispatch(addIngredient(ingredient));
+
+    if (ingredient.type === "bun") {
+      dispatch(setBun(ingredient));
+      dispatch(setModalStatus("bun-there"));
+    } else {
+      dispatch(addIngredient(ingredient));
+    }
 
     // И в любом случае пересчитываем цену
-    dispatch(calculateTotalPrice())
+    dispatch(calculateTotalPrice());
   };
 
   // Хук-переключалка для модалки
@@ -47,14 +55,22 @@ const BurgerConstructor = () => {
 
   // Обработчик кнопки "Оформить заказ"
   const sendOrderHandler = () => {
-    // Берем айдишники ингредиентов в конструкторе
-    const ingredientsId = currentIngredients.map((item) => item.ingredient._id);
-
-    // Оборачиваем ингредиенты в булки
-    const idArray = [currentBun._id, ...ingredientsId, currentBun._id];
-
-    dispatch(sendOrderRequest(idArray));
+    // Показываем модальное окно
     setModalVisible(true);
+
+    // Если булка есть
+    if (Object.keys(currentBun).length !== 0) {
+      // Берем айдишники ингредиентов в конструкторе
+      const ingredientsId = currentIngredients.map(
+        (item) => item.ingredient._id
+      );
+
+      // Оборачиваем ингредиенты в булки
+      const idArray = [currentBun._id, ...ingredientsId, currentBun._id];
+
+      // Запрос
+      dispatch(sendOrderRequest(idArray));
+    }
   };
 
   // Часть, которая описывает верхнюю и нижнюю булки
@@ -91,12 +107,12 @@ const BurgerConstructor = () => {
       <div
         className={`${constructorStyles.emptyBun} text text_type_main-small`}
       >
-        Выберите булку
+        Выберите ингредиенты
       </div>
     ) : (
       <div className={constructorStyles.dynamicBurgerElements}>
         {currentIngredients.map((item, indx) => (
-          <DraggableConstructorElement key={indx} index={indx} item={item} />
+          <DraggableConstructorElement key={item.id} index={indx} item={item} />
         ))}
       </div>
     );
@@ -122,19 +138,19 @@ const BurgerConstructor = () => {
 
   return (
     <>
-      <div className={constructorStyles.mainBlock}>
+      <main className={constructorStyles.mainBlock}>
         <div className={constructorStyles.allBurgerElements} ref={dropTarget}>
           {bunPart("top")}
           {ingredientsPart}
           {bunPart("bottom")}
           {orderPart}
         </div>
-      </div>
+      </main>
 
       {modalVisible && (
-        <Modal header={" "} onClosed={setModalVisible}>
-          <OrderDetails>{orderNumber}</OrderDetails>
-        </Modal>
+        <ModalOverlay header={" "} onClosed={setModalVisible}>
+          <OrderDetails />
+        </ModalOverlay>
       )}
     </>
   );

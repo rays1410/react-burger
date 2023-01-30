@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEventHandler } from "react";
 
 export interface IngredientObject {
   _id: string;
@@ -21,12 +21,14 @@ export interface IngredientObjectArray {
 
 export interface IngredientCardType {
   ingredient: IngredientObject;
+  ingredientClickHandler: (ingredient: IngredientObject) => void;
 }
 
 export interface IngredientTypeTypes {
   children: React.ReactNode;
   data: IngredientObject[];
   typeName: string;
+  ingredientClickHandler: (ingredient: IngredientObject) => void;
 }
 
 export interface ModalTypes {
@@ -34,3 +36,4 @@ export interface ModalTypes {
   header: string;
   onClosed: any;
 }
+

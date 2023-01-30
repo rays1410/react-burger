@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, MouseEventHandler } from "react";
 import { Link, Element } from "react-scroll";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import IngredientType from "../ingredient-type/ingredient-type";
@@ -6,6 +6,11 @@ import ingredientStyles from "./burger-ingredients.module.css";
 import { IngredientObject } from "../../utils/interfaces";
 import { titlesEntries } from "../../utils/constants";
 import { useAppSelector } from "../..";
+import ModalOverlay from "../modal-overlay/modal-overlay";
+import { useDispatch } from "react-redux";
+import { setModalIngredient } from "../../services/ingredientSlice";
+import IngredientDetails from "../ingredient-details/ingredient-details";
+import useToggle from "../../hooks/useToggle";
 
 // Find all entries of ingredient type
 // For example, if typeName is 'bun', function returns array of all buns
@@ -15,6 +20,17 @@ function findButchItems(typeName: string, ingredientsData: IngredientObject[]) {
 
 const BurgerIngredients = () => {
   const [currentTab, setCurrentTab] = useState("bun");
+
+  // State for modal window
+  const [modalVisible, setModalVisible] = useToggle(false);
+  const dispatch = useDispatch();
+
+  const ingredientClickHandler = (
+    ingredient: IngredientObject
+  ) => {
+    dispatch(setModalIngredient(ingredient));
+    setModalVisible(!modalVisible)
+  };
 
   // Получаем ингредиенты из хранилища
   const ingredientsData = useAppSelector(
@@ -28,6 +44,7 @@ const BurgerIngredients = () => {
         key={key}
         data={findButchItems(key, ingredientsData)}
         typeName={key}
+        ingredientClickHandler={ingredientClickHandler}
       >
         {value}
       </IngredientType>
@@ -35,7 +52,7 @@ const BurgerIngredients = () => {
   }, [ingredientsData]);
 
   return (
-    <div className={ingredientStyles.mainBlock}>
+    <main className={ingredientStyles.mainBlock}>
       <p className={`${ingredientStyles.mainTitle} text text_type_main-large`}>
         Соберите бургер
       </p>
@@ -53,11 +70,12 @@ const BurgerIngredients = () => {
             spy={true}
             smooth={true}
             duration={500}
+            onSetActive={() => setCurrentTab(key)}
           >
             <Tab
               value={key}
               active={currentTab === key}
-              onClick={setCurrentTab}
+              onClick={() => undefined}
             >
               {value}
             </Tab>
@@ -76,7 +94,13 @@ const BurgerIngredients = () => {
       >
         {content}
       </Element>
-    </div>
+
+      {modalVisible && (
+        <ModalOverlay header={"Детали ингредиента"} onClosed={setModalVisible}>
+          <IngredientDetails />
+        </ModalOverlay>
+      )}
+    </main>
   );
 };
 

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getData } from "../utils/utils";
-import { INGREDIENTS_URL } from "../utils/constants";
+import { BASE_URL } from "../utils/constants";
 import { IngredientObject } from "../utils/interfaces";
 
 export interface IngredientsState {
@@ -22,9 +22,7 @@ const ingredientsSlice = createSlice({
   initialState,
   reducers: {
     setModalIngredient(state, action) {
-      // При вызове этого редьюсера мы либо кладем ингредиент в модалку,
-      // либо удаляем его. Оба действия триггерятся открытием модалки
-      state.modalIngredient = state.modalIngredient ? null : action.payload;
+      state.modalIngredient = action.payload;
     },
   },
 
@@ -47,7 +45,7 @@ const ingredientsSlice = createSlice({
 export const fetchIngredients = createAsyncThunk(
   "ingredients/fetchIngredients",
   async () => {
-    const response = await getData(INGREDIENTS_URL);
+    const response = await getData(`${BASE_URL}/ingredients`);
     return response.data;
   }
 );
