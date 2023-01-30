@@ -18,7 +18,6 @@ import { useDispatch } from "react-redux";
 import { useDrop } from "react-dnd/dist/hooks";
 import { IngredientObject } from "../../utils/interfaces";
 import { sendOrderRequest } from "../../services/constructorSlice";
-import ModalOverlay from "../modal-overlay/modal-overlay";
 import Modal from "../modal/modal";
 
 const BurgerConstructor = () => {

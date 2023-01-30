@@ -3,10 +3,24 @@ import { CloseIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import { ModalTypes } from "../../utils/interfaces";
 import modalStyles from "./modal.module.css";
 import ModalOverlay from "../modal-overlay/modal-overlay";
+import { ESC_BUTTON } from "../../utils/constants";
+import { useEffect } from "react";
 
 const modalRoot = document.getElementById("react-modals") as HTMLElement;
 
 const Modal = ({ children, header, onClosed }: ModalTypes) => {
+
+  // Subscription on ESC button
+  useEffect(() => {
+    const close = (event: KeyboardEvent) => {
+      if (event.code === ESC_BUTTON) {
+        onClosed();
+      }
+    };
+    window.addEventListener("keydown", close);
+    return () => window.removeEventListener("keydown", close);
+  }, [onClosed]);
+
 
   return ReactDOM.createPortal(
     <ModalOverlay onClosed={onClosed}>
