@@ -1,53 +1,30 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import AppHeader from "../app-header/app-header";
 import BurgerConstructor from "../burger-constructor/burger-constructor";
 import BurgerIngredients from "../burger-ingredients/burger-ingredients";
-import { DataContext } from "../../services/appContext";
-import { DataStateInterface } from "../../services/appContext.interfaces";
-import { INGREDIENTS_URL } from "../../utils/constants";
-import { getData } from "../../utils/utils";
 import appStyles from "./app.module.css";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchIngredients } from "../../services/ingredientSlice";
+import { AppDispatch } from "../..";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 function App() {
-  const [dataState, setDataState] = useState<DataStateInterface>({
-    isLoading: false,
-    isError: false,
-    ingredientsData: [],
-  });
+  const dispatch = useDispatch<AppDispatch>();
+  const dataStatus = useSelector((state: any) => state.ingredients.status);
 
   useEffect(() => {
-    setDataState((dataState) => ({ ...dataState, isLoading: true }));
-    getData(INGREDIENTS_URL)
-      .then(({ data }) =>
-        setDataState((dataState) => ({
-          ...dataState,
-          ingredientsData: data,
-          isLoading: false,
-        }))
-      )
-      .catch((e) =>
-        setDataState((dataState) => ({
-          ...dataState,
-          isLoading: false,
-          isError: true,
-        }))
-      )
-      .finally(() => {
-        setDataState((dataState) => ({
-          ...dataState,
-          isLoading: false,
-        }));
-      });
-  }, []);
+    if (dataStatus === "idle") dispatch(fetchIngredients());
+  }, [dispatch]);
 
   return (
     <>
       <AppHeader />
       <div className={appStyles.centralBlock}>
-        <DataContext.Provider value={{ dataState, setDataState }}>
+        <DndProvider backend={HTML5Backend}>
           <BurgerIngredients />
           <BurgerConstructor />
-        </DataContext.Provider>
+        </DndProvider>
       </div>
     </>
   );

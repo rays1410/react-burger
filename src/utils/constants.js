@@ -1,8 +1,10 @@
 export const ESC_BUTTON = "Escape";
 
-export const INGREDIENTS_URL =
-  "https://norma.nomoreparties.space/api/ingredients";
-export const ORDER_URL = "https://norma.nomoreparties.space/api/orders";
+// export const INGREDIENTS_URL =
+//   "/ingredients";
+// export const ORDER_URL = "https://norma.nomoreparties.space/api/orders";
+
+export const BASE_URL = "https://norma.nomoreparties.space/api";
 
 export const nutrientsNameMapping = {
   calories: "Калории, ккал",
@@ -31,3 +33,5 @@ export const CONSTANT_BUN = {
   image_large: "https://code.s3.yandex.net/react/code/bun-02-large.png",
   __v: 0,
 };
+
+export const ORDER_NUMBER_LOADING = -1;

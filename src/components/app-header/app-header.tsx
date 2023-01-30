@@ -13,21 +13,21 @@ const AppHeader = () => {
       <div className={headerStyles.headerContent}>
         <div className={headerStyles.headerLeft}>
           <div className={headerStyles.headerItem}>
-            <BurgerIcon type="primary" />
             <a
               href="/"
-              className={`text text_type_main-default`}
+              className={`${headerStyles.headerLink} text text_type_main-default`}
             >
+              <BurgerIcon type="primary" />
               Конструктор
             </a>
           </div>
 
           <div className={headerStyles.headerItem}>
-            <ListIcon type="primary" />
             <a
               href="/"
-              className={`${headerStyles.disabled} text text_type_main-default text_color_inactive`}
+              className={`${headerStyles.headerLink} ${headerStyles.disabled} text text_type_main-default text_color_inactive`}
             >
+              <ListIcon type="secondary" />
               Лента заказов
             </a>
           </div>
@@ -39,11 +39,11 @@ const AppHeader = () => {
 
         <div className={headerStyles.headerRight}>
           <div className={headerStyles.headerItem}>
-            <ProfileIcon type="primary" />
             <a
               href="/"
-              className={`${headerStyles.disabled} text text_type_main-default text_color_inactive`}
+              className={`${headerStyles.headerLink} ${headerStyles.disabled} text text_type_main-default text_color_inactive`}
             >
+              <ProfileIcon type="secondary" />
               Личный кабинет
             </a>
           </div>

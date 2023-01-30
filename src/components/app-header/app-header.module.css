@@ -32,8 +32,16 @@
 .headerItem {
   display: flex;
   align-items: center;
+  text-align: center;
   padding: 16px 20px;
   margin: 16px 0px;
+  gap: 8px;
+}
+
+.headerLink {
+  display: flex;
+  align-items: center;
+  text-align: center;
   gap: 8px;
 }
 
@@ -45,3 +53,5 @@ a {
 a.disabled {
   pointer-events: none;
 }
+
+

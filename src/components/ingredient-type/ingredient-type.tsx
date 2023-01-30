@@ -5,22 +5,31 @@ import { Element } from "react-scroll";
 
 // This component contains groups of ingredients, for example buns
 
-const IngredientType = ({ children, data, typeName }: IngredientTypeTypes) => {
+const IngredientType = ({
+  children,
+  data,
+  typeName,
+  ingredientClickHandler,
+}: IngredientTypeTypes) => {
   return (
-    <Element name={typeName}>
-      <div>
+    <>
+      <Element name={typeName}>
         <p
           className={`${ingredientStyles.butchTitle} text text_type_main-medium`}
         >
           {children}
         </p>
         <div className={ingredientStyles.ingredientsButch}>
-          {data.map((item: IngredientObject) => {
-            return <IngredientCard key={item._id} ingredient={item} />;
-          })}
+          {data.map((item: IngredientObject) => (
+            <IngredientCard
+              key={item._id}
+              ingredient={item}
+              ingredientClickHandler={ingredientClickHandler}
+            />
+          ))}
         </div>
-      </div>
-    </Element>
+      </Element>
+    </>
   );
 };
 

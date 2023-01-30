@@ -2,110 +2,155 @@ import {
   Button,
   ConstructorElement,
   CurrencyIcon,
-  DragIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
-
+import DraggableConstructorElement from "../draggable-constructor-element/draggable-constructor-element";
 import constructorStyles from "./burger-constructor.module.css";
-import { useContext, useState } from "react";
-import Modal from "../modal/modal";
 import OrderDetails from "../order-details/order-details";
-import { getRandomIngredients } from "../../utils/utils";
-import { CONSTANT_BUN, ORDER_URL } from "../../utils/constants";
-import { DataContext } from "../../services/appContext";
-import { DataContextType } from "../../services/appContext.interfaces";
 import useToggle from "../../hooks/useToggle";
-import useOrder from "../../hooks/useOrder";
+import {
+  addIngredient,
+  calculateTotalPrice,
+  setBun,
+  setModalStatus,
+} from "../../services/constructorSlice";
+import { AppDispatch, useAppSelector } from "../../index";
+import { useDispatch } from "react-redux";
+import { useDrop } from "react-dnd/dist/hooks";
+import { IngredientObject } from "../../utils/interfaces";
+import { sendOrderRequest } from "../../services/constructorSlice";
+import Modal from "../modal/modal";
 
 const BurgerConstructor = () => {
-  // Булка захардкожена. В дальшейшем, когда можно будет выбирать ингредиенты
-  // кликом, я буду проводить проверку ингредиента на булковость и, если это булка,
-  // буду менять это состояние. Кажется это лучше, чем постоянно
-  // бегать по массиву ингредиентов в конструкторе в поисках нескольких булок.
-  const [currentBun] = useState(CONSTANT_BUN);
-  const { dataState } = useContext<DataContextType>(DataContext);
-
-  // Currently hardcoded
-  // Сейчас в случайный массив может попасть несколько булок.
-  // Это исправится само собой в будущем, как и написано выше,
-  // так что, надеюсь, это не проблема.
-  const numOfTestIngredients = 8;
-  const currentIngredients = getRandomIngredients(
-    numOfTestIngredients,
-    dataState.ingredientsData
+  // Достаем текущее состояние конструктора
+  const { currentIngredients, currentBun, totalPrice } = useAppSelector(
+    (state) => state.burgerConstructor
   );
+  const dispatch = useDispatch<AppDispatch>();
 
-  // Toggle for the modal window
+  // Хук дропа карточек в конструктор
+  const [, dropTarget] = useDrop({
+    accept: "ingredient-card",
+    drop(ingredient: IngredientObject) {
+      onDropHandler(ingredient);
+    },
+  });
+
+  // Обработка дропа
+  const onDropHandler = (ingredient: IngredientObject) => {
+    // Если дропнутый ингредиент - булка, то меняем булку,
+    // иначе - добавляем ингредиент
+
+    if (ingredient.type === "bun") {
+      dispatch(setBun(ingredient));
+      dispatch(setModalStatus("bun-there"));
+    } else {
+      dispatch(addIngredient(ingredient));
+    }
+
+    // И в любом случае пересчитываем цену
+    dispatch(calculateTotalPrice());
+  };
+
+  // Хук-переключалка для модалки
   const [modalVisible, setModalVisible] = useToggle(false);
 
-  // Custom hook for order checkout
-  const { execute, orderNum } = useOrder(
-    currentIngredients,
-    currentBun,
-    ORDER_URL,
-    setModalVisible
-  );
+  // Обработчик кнопки "Оформить заказ"
+  const sendOrderHandler = () => {
+    // Показываем модальное окно
+    setModalVisible(true);
 
-  const totalPrice = () => {
-    return currentIngredients.reduce(
-      (totalPrice, item) => (totalPrice += item?.price),
-      currentBun.price * 2
+    // Если булка есть
+    if (Object.keys(currentBun).length !== 0) {
+      // Берем айдишники ингредиентов в конструкторе
+      const ingredientsId = currentIngredients.map(
+        (item) => item.ingredient._id
+      );
+
+      // Оборачиваем ингредиенты в булки
+      const idArray = [currentBun._id, ...ingredientsId, currentBun._id];
+
+      // Запрос
+      dispatch(sendOrderRequest(idArray));
+    }
+  };
+
+  // Часть, которая описывает верхнюю и нижнюю булки
+  const bunPart = (position: "top" | "bottom") => {
+    // Общий класс для пустой булки
+    const bunClass = `${constructorStyles.emptyBun} text text_type_main-small`;
+
+    // Доп класс для верхней и нижней
+    const extraClass =
+      position === "top"
+        ? `${constructorStyles.topEmptyBun}`
+        : `${constructorStyles.bottomEmptyBun}`;
+
+    // Проверяем пуста ли булка и, в зависимости от этого, показываем
+    // нужный элемент
+    return Object.keys(currentBun).length === 0 ? (
+      <div className={`${bunClass} ${extraClass}`}>Выберите булку</div>
+    ) : (
+      <ConstructorElement
+        type={position}
+        isLocked={true}
+        text={currentBun.name + (position === "top" ? " (верх)" : " (низ)")}
+        price={currentBun.price}
+        thumbnail={currentBun.image || ""}
+      />
     );
   };
 
+  // Часть, которая соответствует отрисовке ингредиентов
+  const ingredientsPart =
+    // Если нет игредиентов - показываем класс пустой булки
+    // Иначе рисуем draggable ингредиенты.
+    currentIngredients.length === 0 ? (
+      <div
+        className={`${constructorStyles.emptyBun} text text_type_main-small`}
+      >
+        Выберите ингредиенты
+      </div>
+    ) : (
+      <div className={constructorStyles.dynamicBurgerElements}>
+        {currentIngredients.map((item, indx) => (
+          <DraggableConstructorElement key={item.id} index={indx} item={item} />
+        ))}
+      </div>
+    );
+
+  // Часть, которая отвечает за оформление заказа
+  const orderPart = (
+    <div className={constructorStyles.priceAndOrder}>
+      <div className={constructorStyles.price}>
+        <p className="text text_type_digits-medium">{totalPrice}</p>
+        <CurrencyIcon type="primary" />
+      </div>
+      <Button
+        htmlType="button"
+        type="primary"
+        size="large"
+        extraClass="ml-10"
+        onClick={sendOrderHandler}
+      >
+        Оформить заказ
+      </Button>
+    </div>
+  );
+
   return (
     <>
-      <div className={constructorStyles.mainBlock}>
-        <div className={constructorStyles.allBurgerElements}>
-          <ConstructorElement
-            type="top"
-            isLocked={true}
-            text={currentBun.name + " (верх)"}
-            price={currentBun.price}
-            thumbnail={currentBun.image || ""}
-          />
-
-          <div className={constructorStyles.dynamicBurgerElements}>
-            {currentIngredients.map((item, indx) => (
-              <div key={indx} className={constructorStyles.burgerItem}>
-                <DragIcon type="primary" />
-                <ConstructorElement
-                  text={item?.name}
-                  price={item?.price}
-                  thumbnail={item?.image || ""}
-                />
-              </div>
-            ))}
-          </div>
-
-          <ConstructorElement
-            type="bottom"
-            isLocked={true}
-            text={currentBun.name + " (низ)"}
-            price={currentBun.price}
-            thumbnail={currentBun.image || ""}
-          />
+      <main className={constructorStyles.mainBlock}>
+        <div className={constructorStyles.allBurgerElements} ref={dropTarget}>
+          {bunPart("top")}
+          {ingredientsPart}
+          {bunPart("bottom")}
+          {orderPart}
         </div>
-
-        <div className={constructorStyles.priceAndOrder}>
-          <div className={constructorStyles.price}>
-            <p className="text text_type_digits-medium">{totalPrice() || 0}</p>
-            <CurrencyIcon type="primary" />
-          </div>
-          <Button
-            htmlType="button"
-            type="primary"
-            size="large"
-            extraClass="ml-10"
-            onClick={execute}
-          >
-            Оформить заказ
-          </Button>
-        </div>
-      </div>
+      </main>
 
       {modalVisible && (
         <Modal header={" "} onClosed={setModalVisible}>
-          <OrderDetails>{orderNum}</OrderDetails>
+          <OrderDetails />
         </Modal>
       )}
     </>
