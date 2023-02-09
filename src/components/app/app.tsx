@@ -1,13 +1,41 @@
 import { useEffect } from "react";
-import AppHeader from "../app-header/app-header";
-import BurgerConstructor from "../burger-constructor/burger-constructor";
-import BurgerIngredients from "../burger-ingredients/burger-ingredients";
-import appStyles from "./app.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchIngredients } from "../../services/ingredientSlice";
 import { AppDispatch } from "../..";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import HomePage from "../../pages/home-page/home-page";
+import LoginPage from "../../pages/login-page/login-page";
+import RegisterPage from "../../pages/registration-page/register-page";
+import ForgotPasswordPage from "../../pages/forgot-password-page/forgot-password-page";
+import ResetPasswordPage from "../../pages/reset-password-page/reset-password-page";
+import ProfilePage from "../../pages/profile-page/profile-page";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <HomePage />,
+  },
+  {
+    path: "/login",
+    element: <LoginPage />,
+  },
+  {
+    path: "/register",
+    element: <RegisterPage />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPasswordPage />,
+  },
+  {
+    path: "/profile",
+    element: <ProfilePage />,
+  },
+]);
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -17,17 +45,7 @@ function App() {
     if (dataStatus === "idle") dispatch(fetchIngredients());
   }, [dispatch]);
 
-  return (
-    <>
-      <AppHeader />
-      <div className={appStyles.centralBlock}>
-        <DndProvider backend={HTML5Backend}>
-          <BurgerIngredients />
-          <BurgerConstructor />
-        </DndProvider>
-      </div>
-    </>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;

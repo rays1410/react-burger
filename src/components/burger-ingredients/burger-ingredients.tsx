@@ -6,7 +6,6 @@ import ingredientStyles from "./burger-ingredients.module.css";
 import { IngredientObject } from "../../utils/interfaces";
 import { titlesEntries } from "../../utils/constants";
 import { useAppSelector } from "../..";
-import ModalOverlay from "../modal-overlay/modal-overlay";
 import { useDispatch } from "react-redux";
 import { setModalIngredient } from "../../services/ingredientSlice";
 import IngredientDetails from "../ingredient-details/ingredient-details";

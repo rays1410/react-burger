@@ -1,9 +1,5 @@
 export const ESC_BUTTON = "Escape";
 
-// export const INGREDIENTS_URL =
-//   "/ingredients";
-// export const ORDER_URL = "https://norma.nomoreparties.space/api/orders";
-
 export const BASE_URL = "https://norma.nomoreparties.space/api";
 
 export const nutrientsNameMapping = {

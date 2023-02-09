@@ -6,7 +6,6 @@ import {
 } from "@reduxjs/toolkit";
 import { BASE_URL } from "../utils/constants";
 import { IngredientObject } from "../utils/interfaces";
-import axios from "axios";
 import { postOrder } from "../utils/utils";
 export interface ConstructorItem {
   id: string;
@@ -102,18 +101,16 @@ const constructorSlice = createSlice({
       })
       .addCase(sendOrderRequest.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.modalStatus = 'order-success'
+        state.modalStatus = "order-success";
         state.orderNumber = action.payload;
       })
       .addCase(sendOrderRequest.rejected, (state, action) => {
         state.error = action.error.message;
         state.status = "failed";
-        state.modalStatus = 'order-failed'
+        state.modalStatus = "order-failed";
       });
   },
 });
-
-
 
 export const sendOrderRequest = createAsyncThunk(
   "order/sendOrder",
