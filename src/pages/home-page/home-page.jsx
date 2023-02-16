@@ -8,7 +8,6 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 const HomePage = () => {
   return (
     <>
-      <AppHeader />
       <div className={homeStyles.centralBlock}>
         <DndProvider backend={HTML5Backend}>
           <BurgerIngredients />

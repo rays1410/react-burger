@@ -2,19 +2,38 @@ import {
   EmailInput,
   PasswordInput,
 } from "@ya.praktikum/react-developer-burger-ui-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import loginStyles from "./login.module.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BASE_URL } from "../../utils/constants";
 import { loginUser } from "../../utils/utils";
+import { useDispatch } from "react-redux";
+import { loginRequest, checkUserAuth } from "../../services/authSlice";
+import { useAppSelector } from "../..";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("dreyz@yandex.ru");
   const [password, setPassword] = useState("password");
+
+  const {
+    userInfo,
+    error,
+    isAccessTokenValid,
+  } = useAppSelector((state) => state.authSlice);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const handleLogin = async () => {
-    const res = await loginUser(BASE_URL + "/auth/login", email, password);
-    console.log(res);
+    dispatch(loginRequest({ email, password }));
   };
+
+  useEffect(() => {
+    if (isAccessTokenValid) {
+      navigate("/profile");
+    }
+  }, [userInfo, isAccessTokenValid]);
+
   return (
     <div className={loginStyles.mainBlock}>
       <div className={loginStyles.upperBlock}>
@@ -36,7 +55,6 @@ const LoginPage = () => {
 
       <div className={loginStyles.lowerBlock}>
         <span className="text text_type_main-small">
-          Зарегистрироваться
           <p>
             Вы — новый пользователь?{" "}
             <Link to="/register">Зарегистрироваться</Link>
@@ -48,6 +66,8 @@ const LoginPage = () => {
             <Link to="/forgot-password">Восстановить пароль</Link>
           </p>
         </span>
+
+        {error ? <p>Ошибка: {error}</p> : null}
       </div>
     </div>
   );

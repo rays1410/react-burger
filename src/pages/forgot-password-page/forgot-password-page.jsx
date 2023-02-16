@@ -3,28 +3,31 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { redirect, useNavigate } from "react-router-dom";
 import { useAppSelector } from "../..";
-import { sendForgotPasswordRequest } from "../../services/forgotPasswordSlice";
-import { BASE_URL } from "../../utils/constants";
-import { forgotPasswordRequest } from "../../utils/utils";
+import { forgotPasswordRequest } from "../../services/resetPasswordSlice";
 
 import loginStyles from "./forgot-password.module.css";
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("dreyz@yandex.ru");
   const dispatch = useDispatch();
-  const { requestStatus } = useAppSelector((store) =>
-    store.forgotPasswordSlice
+
+  const { loading, requestSuccess, message, error } = useAppSelector(
+    (store) => store.resetPasswordSlice
   );
+
+
   const navigate = useNavigate();
   useEffect(() => {
-    console.log(requestStatus);
-    if (requestStatus === 'succeeded') {
-      console.log('go')
-      navigate("/reset-password");
+    console.log(requestSuccess);
+    if (requestSuccess) {
+      console.log("email sent, go to reset password page");
+      navigate("/reset-password")
+    } else {
+      console.log("email is not sent");
     }
-  }, [requestStatus]);
+  }, [requestSuccess]);
 
-  const handleForgotPassword = () => dispatch(sendForgotPasswordRequest(email));
+  const handleForgotPassword = () => dispatch(forgotPasswordRequest({email}));
 
   return (
     <div className={loginStyles.mainBlock}>
@@ -38,6 +41,7 @@ const ForgotPasswordPage = () => {
         />
         <button onClick={handleForgotPassword}>Отправить</button>
       </div>
+      {error ? <p>Ошибка: {error}</p> : null}
     </div>
   );
 };

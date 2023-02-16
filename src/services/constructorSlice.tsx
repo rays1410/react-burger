@@ -87,9 +87,10 @@ const constructorSlice = createSlice({
       state.modalStatus = action.payload;
     },
 
-    // Ресетим хранилищи после успешного получения номера заказа
+    // Ресетим хранилище после успешного получения номера заказа
     reset(state) {
-      Object.assign(state, initialState);
+      state.currentBun = {} as IngredientObject;
+      state.currentIngredients = [] as ConstructorItem[];
     },
   },
 

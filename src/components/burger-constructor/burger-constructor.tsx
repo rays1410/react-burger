@@ -10,6 +10,7 @@ import useToggle from "../../hooks/useToggle";
 import {
   addIngredient,
   calculateTotalPrice,
+  reset,
   setBun,
   setModalStatus,
 } from "../../services/constructorSlice";
@@ -70,7 +71,9 @@ const BurgerConstructor = () => {
       const idArray = [currentBun._id, ...ingredientsId, currentBun._id];
 
       // Запрос
-      dispatch(sendOrderRequest(idArray));
+      dispatch(sendOrderRequest(idArray)).then((payload) =>
+        payload ? dispatch(reset()) : null
+      );
     }
   };
 

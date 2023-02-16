@@ -7,7 +7,9 @@ import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import ingredientReducer from "./services/ingredientSlice";
 import constructorSlice from "./services/constructorSlice";
-import forgotPasswordSlice from "./services/forgotPasswordSlice";
+import authSlice from "./services/authSlice";
+import resetPasswordSlice from "./services/resetPasswordSlice";
+import { BrowserRouter } from "react-router-dom";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -17,7 +19,8 @@ const store = configureStore({
   reducer: {
     ingredients: ingredientReducer,
     burgerConstructor: constructorSlice,
-    forgotPasswordSlice: forgotPasswordSlice,
+    authSlice: authSlice,
+    resetPasswordSlice: resetPasswordSlice,
   },
   devTools: process.env.NODE_ENV !== "production",
 });
@@ -25,7 +28,9 @@ const store = configureStore({
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </Provider>
   </React.StrictMode>
 );

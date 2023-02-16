@@ -1,21 +1,38 @@
 import {
-  Input, PasswordInput,
+  Input,
+  PasswordInput,
 } from "@ya.praktikum/react-developer-burger-ui-components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../..";
+import { resetPasswordRequest } from "../../services/resetPasswordSlice";
 import { BASE_URL } from "../../utils/constants";
-import { resetPasswordRequest } from "../../utils/utils";
 
 import resetPasswrodStyles from "./reset-password.module.css";
 const ResetPasswordPage = () => {
-
   const [newPassword, setNewPassword] = useState("");
-  const [emailToken, setEmailToken] = useState("")
+  const [emailToken, setEmailToken] = useState("");
 
-  const handleResetPassword = () => {
-    const res = resetPasswordRequest(BASE_URL + "/password-reset",  newPassword);
-    return res;
-  }
-  
+  const dispatch = useDispatch();
+  const { loading, changeSuccess, message, error } = useAppSelector(
+    (store) => store.resetPasswordSlice
+  );
+
+  const handleResetPassword = () =>
+    dispatch(resetPasswordRequest({ newPassword, emailToken }));
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    console.log(changeSuccess);
+    if (changeSuccess) {
+      console.log("password changed, go to main page");
+      // navigate("/")
+    } else {
+      console.log("password is not changed");
+    }
+  }, [changeSuccess]);
+
   return (
     <div className={resetPasswrodStyles.mainBlock}>
       <div className={resetPasswrodStyles.upperBlock}>
@@ -25,7 +42,7 @@ const ResetPasswordPage = () => {
           value={newPassword}
           name={"newPassword"}
           extraClass="mb-2"
-          placeholder="Новый праоль"
+          placeholder="Новый пароль"
         />
         <Input
           type={"text"}
@@ -36,10 +53,9 @@ const ResetPasswordPage = () => {
           size={"default"}
           extraClass="ml-1"
         />
-        
+
         <button onClick={handleResetPassword}>Сохранить</button>
       </div>
-
     </div>
   );
 };

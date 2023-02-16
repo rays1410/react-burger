@@ -1,0 +1,20 @@
+.mainBlock {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.leftBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.rightBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.disabledLink {
+  color: cadetblue;
+}

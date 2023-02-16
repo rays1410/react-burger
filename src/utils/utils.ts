@@ -33,8 +33,12 @@ export const registerUser = async (
     })
     .then((res: any) => {
       console.log(res);
+      return res;
     })
-    .catch((e) => console.log(e));
+    .catch((e) => {
+      console.log("ошибка в utils/register");
+      Promise.reject(e)
+    });
 
 export const loginUser = async (url: string, email: string, password: string) =>
   axios
