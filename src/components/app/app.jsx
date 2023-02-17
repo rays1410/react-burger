@@ -9,6 +9,7 @@ import {
   RouterProvider,
   Routes,
   useLocation,
+  useNavigate,
 } from "react-router-dom";
 import HomePage from "../../pages/home-page/home-page";
 import LoginPage from "../../pages/login-page/login-page";
@@ -28,22 +29,23 @@ import useToggle from "../../hooks/useToggle";
 function App() {
   const location = useLocation();
   const background = location.state && location.state.background;
+  const navigate = useNavigate();
 
   const router = (
     <>
       <AppHeader />
 
       <Routes location={background || location}>
-        <Route path="/" element={<HomePage />} />
+        <Route exact path="/" element={<HomePage />} />
         <Route path="ingredients/:id" element={<IngredientPage />} />
       </Routes>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route exact path="/" element={<HomePage />} />
         {background && (
           <Route
             path="ingredients/:id"
             element={
-              <Modal header={"Детали ингредиента"}>
+              <Modal header={"Детали ингредиента"} onClosedModal={() => navigate("/")}>
                 <IngredientPage />
               </Modal>
             }

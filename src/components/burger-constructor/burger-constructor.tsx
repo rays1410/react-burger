@@ -36,10 +36,6 @@ const BurgerConstructor = () => {
     },
   });
 
-  const closeModalCallback = () => {
-    setModalVisible(false);
-  }
-
   // Обработка дропа
   const onDropHandler = (ingredient: IngredientObject) => {
     // Если дропнутый ингредиент - булка, то меняем булку,
@@ -156,7 +152,7 @@ const BurgerConstructor = () => {
       </main>
 
       {modalVisible && (
-        <Modal header={" "} closeModalCallback={closeModalCallback}>
+        <Modal header={" "} onClosedModal={() => setModalVisible(false)}>
           <OrderDetails />
         </Modal>
       )}

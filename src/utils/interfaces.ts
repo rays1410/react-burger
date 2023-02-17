@@ -34,7 +34,7 @@ export interface IngredientTypeTypes {
 export interface ModalTypes {
   children: React.ReactNode;
   header: string;
-  closeModalCallback: any;
+  onClosedModal: any;
 }
 
 export interface ModalOverlayTypes {

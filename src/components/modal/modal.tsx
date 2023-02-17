@@ -9,12 +9,12 @@ import { useNavigate } from "react-router";
 
 const modalRoot = document.getElementById("react-modals") as HTMLElement;
 
-const Modal = ({ children, header, closeModalCallback }: ModalTypes) => {
+const Modal = ({ children, header, onClosedModal }: ModalTypes) => {
   const navigate = useNavigate();
-  const onClosedModal = () => {
-    navigate("/");
-    closeModalCallback();
-  }
+  // const onClosedModal = () => {
+  //   navigate("/");
+  //   closeModalCallback();
+  // }
 
   // Subscription on ESC button
   useEffect(() => {
