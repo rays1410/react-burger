@@ -27,7 +27,7 @@ const BurgerIngredients = () => {
 
   const ingredientClickHandler = (ingredient: IngredientObject) => {
     dispatch(setModalIngredient(ingredient));
-    setModalVisible(!modalVisible);
+    // setModalVisible(!modalVisible);
   };
 
   // Получаем ингредиенты из хранилища
@@ -37,7 +37,8 @@ const BurgerIngredients = () => {
 
   // Мемоизируем ингредиенты
   const content = useMemo(() => {
-    return titlesEntries.map(([key, value]) => (
+    return titlesEntries.map(([key, value], indx) => (
+     
       <IngredientType
         key={key}
         data={findButchItems(key, ingredientsData)}
@@ -93,11 +94,11 @@ const BurgerIngredients = () => {
         {content}
       </Element>
 
-      {modalVisible && (
+      {/* {modalVisible && (
         <Modal header={"Детали ингредиента"} onClosed={setModalVisible}>
           <IngredientDetails />
         </Modal>
-      )}
+      )} */}
     </main>
   );
 };

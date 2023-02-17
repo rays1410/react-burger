@@ -45,6 +45,9 @@ const authSlice = createSlice({
       state.userInfo = null;
       state.isAuthChecked = false;
     },
+    toggleLoading: (state, action) => {
+      state.loading = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -85,6 +88,28 @@ const authSlice = createSlice({
         state.loading = false;
       })
 
+      // logout
+      .addCase(logoutRequest.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(logoutRequest.fulfilled, (state, { payload }) => {
+        state.userInfo = null;
+        state.userAccessToken = null;
+        state.userRefreshToken = null;
+        state.error = null;
+        state.isAccessTokenValid = false;
+        state.isAuthChecked = false;
+        state.isUserLogged = false;
+        state.loading = false;
+        console.log("logout suc");
+
+        deleteCookie("refreshToken");
+      })
+      .addCase(logoutRequest.rejected, (state, { payload }) => {
+        state.error = payload;
+        state.loading = false;
+      })
+
       // new token
       .addCase(getNewAccessToken.pending, (state) => {
         state.loading = true;
@@ -92,7 +117,7 @@ const authSlice = createSlice({
       .addCase(getNewAccessToken.fulfilled, (state, { payload }) => {
         state.userAccessToken = payload.accessToken;
         state.isAccessTokenValid = true;
-        state.isAuthChecked = false;
+        // state.isAuthChecked = false;
         state.loading = false;
         deleteCookie("refreshToken");
         setCookie("refreshToken", payload.refreshToken);
@@ -110,10 +135,12 @@ const authSlice = createSlice({
         state.userInfo = payload.user;
         state.isUserLogged = true;
         state.loading = false;
+        state.isAuthChecked = true;
       })
       .addCase(checkUserAuth.rejected, (state, { payload }) => {
         state.error = payload;
         state.loading = false;
+        state.isAuthChecked = true;
       })
 
       // change user data
@@ -172,12 +199,32 @@ export const loginRequest = createAsyncThunk(
   }
 );
 
+export const logoutRequest = createAsyncThunk(
+  "auth/logout",
+  async ({ token }, thunkAPI) => {
+    console.log("sent req for logout", token);
+    try {
+      const { data } = await axios.post(`${BASE_URL}/auth/logout`, {
+        token,
+      });
+      return data;
+    } catch (error) {
+      console.log("logout err");
+
+      if (error.response && error.response.data.message) {
+        return thunkAPI.rejectWithValue(error.response.data.message);
+      } else {
+        return thunkAPI.rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
 export const changeUserData = createAsyncThunk(
   "auth/changeUserData",
   async ({ token, email, name, password }, { rejectWithValue }) => {
     try {
       console.log(token, email, name, password);
-      const tsttoken = getCookie("refreshToken");
       const { data } = await axios.patch(
         `${BASE_URL}/auth/user`,
         {
@@ -217,19 +264,18 @@ export const getNewAccessToken = createAsyncThunk(
   }
 );
 
+// надо переделать access в куки, тогда мб лучше будет
 export const checkUserAuth = createAsyncThunk(
   "auth/checkUserAuth",
   async ({ accessToken }, thunkAPI) => {
     if (accessToken) {
       try {
-        // console.log(`пытаюсь поулчить юзера по токену Bearer ${token}`);
         const { data } = await axios.get(`${BASE_URL}/auth/user`, {
           headers: {
             "Content-type": "application/json",
             Authorization: accessToken,
           },
         });
-
         return data;
       } catch (error) {
         if (error.response.data.message === "jwt expired") {
@@ -237,10 +283,9 @@ export const checkUserAuth = createAsyncThunk(
         }
         return thunkAPI.rejectWithValue(error.response.data.message);
       } finally {
-        thunkAPI.dispatch(authChecked());
       }
     } else {
-      thunkAPI.dispatch(authChecked());
+      console.log("аксеса нет, надо взять аксес");
       return thunkAPI.rejectWithValue("rejected аксес токен не найден");
     }
   }
@@ -251,7 +296,7 @@ export const {
   authChecked,
   jwtExpired,
   userDelete,
-  toggleAuthChecking,
+  toggleLoading,
 } = authSlice.actions;
 
 export default authSlice.reducer;

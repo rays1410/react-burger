@@ -2,6 +2,7 @@ import ingredientStyles from "./ingredient-type.module.css";
 import IngredientCard from "../ingredient-card/ingredient-card";
 import { IngredientObject, IngredientTypeTypes } from "../../utils/interfaces";
 import { Element } from "react-scroll";
+import { Link, useLocation } from "react-router-dom";
 
 // This component contains groups of ingredients, for example buns
 
@@ -11,6 +12,7 @@ const IngredientType = ({
   typeName,
   ingredientClickHandler,
 }: IngredientTypeTypes) => {
+  const location = useLocation();
   return (
     <>
       <Element name={typeName}>
@@ -21,11 +23,16 @@ const IngredientType = ({
         </p>
         <div className={ingredientStyles.ingredientsButch}>
           {data.map((item: IngredientObject) => (
-            <IngredientCard
+            <Link
               key={item._id}
-              ingredient={item}
-              ingredientClickHandler={ingredientClickHandler}
-            />
+              to={`ingredients/${item._id}`}
+              state={{ background: location }}
+            >
+              <IngredientCard
+                ingredient={item}
+                ingredientClickHandler={ingredientClickHandler}
+              />
+            </Link>
           ))}
         </div>
       </Element>

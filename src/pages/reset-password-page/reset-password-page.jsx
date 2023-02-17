@@ -24,12 +24,9 @@ const ResetPasswordPage = () => {
 
   const navigate = useNavigate();
   useEffect(() => {
-    console.log(changeSuccess);
     if (changeSuccess) {
-      console.log("password changed, go to main page");
-      // navigate("/")
+      navigate("/")
     } else {
-      console.log("password is not changed");
     }
   }, [changeSuccess]);
 

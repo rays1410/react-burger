@@ -27,13 +27,9 @@ const RegisterPage = () => {
     dispatch(registerRequest({ email, password, name }));
   };
 
-  useEffect(() => {
-    if (userInfo) {
-      navigate("/");
-    }
-  }, [userInfo, isAuthChecked]);
-
-  return (
+  return loading ? (
+    <div>{"Loading..."}</div>
+  ) : (
     <>
       <div className={loginStyles.mainBlock}>
         <div className={loginStyles.upperBlock}>

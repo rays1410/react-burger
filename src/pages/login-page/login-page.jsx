@@ -8,18 +8,15 @@ import { useState, useEffect } from "react";
 import { BASE_URL } from "../../utils/constants";
 import { loginUser } from "../../utils/utils";
 import { useDispatch } from "react-redux";
-import { loginRequest, checkUserAuth } from "../../services/authSlice";
+import { loginRequest, logoutRequest } from "../../services/authSlice";
 import { useAppSelector } from "../..";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("dreyz@yandex.ru");
   const [password, setPassword] = useState("password");
 
-  const {
-    userInfo,
-    error,
-    isAccessTokenValid,
-  } = useAppSelector((state) => state.authSlice);
+  const { userInfo, error, isAccessTokenValid, userRefreshToken, loading } =
+    useAppSelector((state) => state.authSlice);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -29,12 +26,14 @@ const LoginPage = () => {
   };
 
   useEffect(() => {
-    if (isAccessTokenValid) {
+    if (userInfo) {
       navigate("/profile");
     }
   }, [userInfo, isAccessTokenValid]);
 
-  return (
+  return loading ? (
+    <div>{"Loading"}</div>
+  ) : (
     <div className={loginStyles.mainBlock}>
       <div className={loginStyles.upperBlock}>
         <p className="text text_type_main-medium">Вход</p>

@@ -9,14 +9,17 @@ import {
   PasswordInput,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import { useDispatch } from "react-redux";
-import { userDelete, changeUserData } from "../../services/authSlice";
+import {
+  userDelete,
+  changeUserData,
+  logoutRequest,
+} from "../../services/authSlice";
 
 const ProfilePage = () => {
   const activeClassName = `${styles.disabledLink} text text_type_main-medium`;
   const disabledClassName = `text text_type_main-medium`;
-  const { userInfo, userAccessToken } = useAppSelector(
-    (state) => state.authSlice
-  );
+  const { userInfo, userAccessToken, userRefreshToken, loading } =
+    useAppSelector((state) => state.authSlice);
 
   const [name, setName] = useState(userInfo.name);
   const [email, setEmail] = useState(userInfo.email);
@@ -36,7 +39,15 @@ const ProfilePage = () => {
     setPassword("");
   };
 
-  return (
+  const handleLogout = async (e) => {
+    e.preventDefault();
+    console.log("kek");
+    dispatch(logoutRequest({ token: userRefreshToken }));
+  };
+
+  return loading ? (
+    <div>{"Loading"}</div>
+  ) : (
     <div className={styles.mainBlock}>
       <div className={styles.leftBlock}>
         <NavLink
@@ -56,10 +67,12 @@ const ProfilePage = () => {
           История заказов
         </NavLink>
         <NavLink
-          to="/"
           className={({ isActive }) =>
             isActive ? activeClassName : disabledClassName
           }
+          onClick={(e) => {
+            handleLogout(e);
+          }}
         >
           Выход
         </NavLink>
