@@ -13,7 +13,6 @@ import { getCookie } from "../../utils/cookieUtils";
 
 export default function ProtectedRoute({ onlyUnAuth = false, redirectTo, children }) {
   const location = useLocation();
-  const navigate = useNavigate();
 
   const { isAuthChecked, userInfo } = useAppSelector((state) => state.authSlice);
 

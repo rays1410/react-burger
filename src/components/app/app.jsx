@@ -13,6 +13,7 @@ import AppHeader from "../app-header/app-header";
 import { checkUserAuth, getNewAccessToken } from "../../services/authSlice";
 import IngredientPage from "../../pages/ingredient-page/ingredient-page";
 import Modal from "../modal/modal";
+import { getCookie } from "../../utils/cookieUtils";
 
 function App() {
   const location = useLocation();
@@ -94,28 +95,22 @@ function App() {
   // const dataStatus = useSelector((state: any) => state.ingredients.status);
   const dataStatus = useSelector((state) => state.ingredients.status);
 
-  const {
-    userInfo,
-    userAccessToken,
-    userRefreshToken,
-    isAccessTokenValid,
-    loading,
-  } = useSelector((state) => state.authSlice);
+  const { userInfo, userRefreshToken, isAccessTokenValid, loading } =
+    useSelector((state) => state.authSlice);
 
   useEffect(() => {
     if (dataStatus === "idle") dispatch(fetchIngredients());
 
     if (!userInfo) {
-      console.log("пользователь не найден, делаю запрос...");
-      dispatch(checkUserAuth({ accessToken: userAccessToken }));
+      dispatch(checkUserAuth());
     }
 
     if (!isAccessTokenValid && userRefreshToken) {
-      dispatch(getNewAccessToken({ refreshToken: userRefreshToken }));
+      dispatch(getNewAccessToken());
     }
-  }, [isAccessTokenValid, userRefreshToken]);
+  }, [isAccessTokenValid]);
 
-  return dataStatus === "succeeded" ? router : <div>Loading...</div>;
+  return dataStatus === "succeeded" && !loading ? router : <div>Loading...</div>;
 }
 
 export default App;

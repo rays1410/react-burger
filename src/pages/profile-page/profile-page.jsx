@@ -1,8 +1,7 @@
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useAppSelector } from "../..";
-import { getCookie } from "../../utils/cookieUtils";
 import styles from "./profile.module.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   EmailInput,
   Input,
@@ -105,8 +104,6 @@ const ProfilePage = () => {
           size={"default"}
           extraClass="ml-1"
         />
-
-        <button onClick={() => dispatch(userDelete())}>проверка</button>
 
         {isDataChanged ? (
           <>

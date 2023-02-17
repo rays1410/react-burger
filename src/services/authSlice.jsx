@@ -51,18 +51,19 @@ const authSlice = createSlice({
   },
   extraReducers(builder) {
     builder
+
       // registration
       .addCase(registerRequest.pending, (state) => {
         state.loading = true;
       })
       .addCase(registerRequest.fulfilled, (state, { payload }) => {
-        state.userAccessToken = payload.accessToken;
-        state.userInfo = payload.user;
         state.isAccessTokenValid = true;
         state.isAuthChecked = true;
         state.isUserLogged = true;
-        setCookie("refreshToken", payload.refreshToken);
         state.loading = false;
+        state.userInfo = payload.user;
+        setCookie("accessToken", payload.accessToken);
+        setCookie("refreshToken", payload.refreshToken);
       })
       .addCase(registerRequest.rejected, (state, { payload }) => {
         state.error = payload;
@@ -74,14 +75,13 @@ const authSlice = createSlice({
         state.loading = true;
       })
       .addCase(loginRequest.fulfilled, (state, { payload }) => {
-        state.userAccessToken = payload.accessToken;
-        state.userInfo = payload.user;
         state.isAccessTokenValid = true;
         state.isAuthChecked = true;
         state.isUserLogged = true;
-
-        setCookie("refreshToken", payload.refreshToken);
         state.loading = false;
+        state.userInfo = payload.user;
+        setCookie("accessToken", payload.accessToken);
+        setCookie("refreshToken", payload.refreshToken);
       })
       .addCase(loginRequest.rejected, (state, { payload }) => {
         state.error = payload;
@@ -93,16 +93,14 @@ const authSlice = createSlice({
         state.loading = true;
       })
       .addCase(logoutRequest.fulfilled, (state, { payload }) => {
-        state.userInfo = null;
-        state.userAccessToken = null;
-        state.userRefreshToken = null;
-        state.error = null;
         state.isAccessTokenValid = false;
         state.isAuthChecked = false;
         state.isUserLogged = false;
         state.loading = false;
+        state.userInfo = null;
+        state.error = null;
         console.log("logout suc");
-
+        deleteCookie("accessToken");
         deleteCookie("refreshToken");
       })
       .addCase(logoutRequest.rejected, (state, { payload }) => {
@@ -115,11 +113,11 @@ const authSlice = createSlice({
         state.loading = true;
       })
       .addCase(getNewAccessToken.fulfilled, (state, { payload }) => {
-        state.userAccessToken = payload.accessToken;
         state.isAccessTokenValid = true;
-        // state.isAuthChecked = false;
         state.loading = false;
         deleteCookie("refreshToken");
+        deleteCookie("accessToken")
+        setCookie("accessToken", payload.accessToken);
         setCookie("refreshToken", payload.refreshToken);
       })
       .addCase(getNewAccessToken.rejected, (state, { payload }) => {
@@ -252,7 +250,8 @@ export const changeUserData = createAsyncThunk(
 
 export const getNewAccessToken = createAsyncThunk(
   "auth/getNewAccessToken",
-  async ({ refreshToken }, thunkAPI) => {
+  async (_, thunkAPI) => {
+    const refreshToken = getCookie("refreshToken");
     try {
       const { data } = await axios.post(`${BASE_URL}/auth/token`, {
         token: refreshToken,
@@ -267,7 +266,9 @@ export const getNewAccessToken = createAsyncThunk(
 // надо переделать access в куки, тогда мб лучше будет
 export const checkUserAuth = createAsyncThunk(
   "auth/checkUserAuth",
-  async ({ accessToken }, thunkAPI) => {
+  async (_, thunkAPI) => {
+    const accessToken = getCookie("accessToken");
+    console.log(accessToken)
     if (accessToken) {
       try {
         const { data } = await axios.get(`${BASE_URL}/auth/user`, {
@@ -282,14 +283,29 @@ export const checkUserAuth = createAsyncThunk(
           thunkAPI.isAccessTokenValid = false;
         }
         return thunkAPI.rejectWithValue(error.response.data.message);
-      } finally {
-      }
+      } 
     } else {
       console.log("аксеса нет, надо взять аксес");
       return thunkAPI.rejectWithValue("rejected аксес токен не найден");
     }
   }
 );
+
+
+// export const authRequest = (accessToken) => {
+//   return axios.get(`${BASE_URL}/auth/user`, {
+//     headers: {
+//       "Content-type": "application/json",
+//       Authorization: accessToken,
+//     },
+//   }).then((response) => {
+//     if(response.data.accessToken) {
+      
+//     }
+//   });
+// };
+
+
 
 export const {
   storeRefreshToken,
