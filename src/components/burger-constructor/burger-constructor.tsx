@@ -52,11 +52,17 @@ const BurgerConstructor = () => {
     dispatch(calculateTotalPrice());
   };
 
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    dispatch(reset());
+  }
+
   // Хук-переключалка для модалки
   const [modalVisible, setModalVisible] = useToggle(false);
 
   // Обработчик кнопки "Оформить заказ"
   const sendOrderHandler = () => {
+
     // Показываем модальное окно
     setModalVisible(true);
 
@@ -71,9 +77,13 @@ const BurgerConstructor = () => {
       const idArray = [currentBun._id, ...ingredientsId, currentBun._id];
 
       // Запрос
-      dispatch(sendOrderRequest(idArray)).then((payload) =>
-        payload ? dispatch(reset()) : null
-      );
+      // dispatch(sendOrderRequest(idArray)).then((payload) => {
+      //   console.log(payload)
+      //   return payload ? dispatch(reset()) : null;
+      // });
+      dispatch(sendOrderRequest(idArray)).then((payload) => {
+        return payload;
+      });
     }
   };
 
@@ -152,7 +162,7 @@ const BurgerConstructor = () => {
       </main>
 
       {modalVisible && (
-        <Modal header={" "} onClosedModal={() => setModalVisible(false)}>
+        <Modal header={" "} onClosedModal={handleCloseModal}>
           <OrderDetails />
         </Modal>
       )}

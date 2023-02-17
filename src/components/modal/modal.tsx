@@ -5,16 +5,10 @@ import modalStyles from "./modal.module.css";
 import ModalOverlay from "../modal-overlay/modal-overlay";
 import { ESC_BUTTON } from "../../utils/constants";
 import { useEffect } from "react";
-import { useNavigate } from "react-router";
 
 const modalRoot = document.getElementById("react-modals") as HTMLElement;
 
 const Modal = ({ children, header, onClosedModal }: ModalTypes) => {
-  const navigate = useNavigate();
-  // const onClosedModal = () => {
-  //   navigate("/");
-  //   closeModalCallback();
-  // }
 
   // Subscription on ESC button
   useEffect(() => {

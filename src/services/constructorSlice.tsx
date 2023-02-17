@@ -62,6 +62,7 @@ const constructorSlice = createSlice({
     // Устанавливаем булку
     setBun: (state, action) => {
       state.currentBun = action.payload;
+      state.modalStatus = "bun-there";
     },
 
     // Сортировка перетаскиванием ингредиентов
@@ -91,6 +92,9 @@ const constructorSlice = createSlice({
     reset(state) {
       state.currentBun = {} as IngredientObject;
       state.currentIngredients = [] as ConstructorItem[];
+      state.orderNumber = -1;
+      state.modalStatus = "no-bun-error";
+      state.error = null;
     },
   },
 
