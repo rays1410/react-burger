@@ -9,12 +9,18 @@ import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { clearUserMessage, userLogin } from "../../services/authSlice";
 import { AppDispatch, useAppSelector } from "../..";
-import { PATH_FORGOT_PASSWORD, PATH_PROFILE, PATH_REGISTER } from "../../utils/pageNames";
+import {
+  PATH_FORGOT_PASSWORD,
+  PATH_PROFILE,
+  PATH_REGISTER,
+} from "../../utils/pageNames";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { userInfo, userMessage, isUserLogged } = useAppSelector((state) => state.authSlice);
+  const { userMessage, isUserLogged } = useAppSelector(
+    (state) => state.authSlice
+  );
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
@@ -22,19 +28,11 @@ const LoginPage = () => {
     if (isUserLogged) {
       navigate(PATH_PROFILE);
     }
-  }, [isUserLogged]);
+  }, [navigate, isUserLogged]);
 
   const handleLogin = () => {
     dispatch(clearUserMessage());
-    dispatch(userLogin({ email, password }))
-      .unwrap()
-      .then(() => {
-        if (userInfo) {
-          navigate(PATH_PROFILE);
-        }
-      })
-      .catch((err) => {
-      });
+    dispatch(userLogin({ email, password }));
   };
 
   return (
@@ -46,7 +44,7 @@ const LoginPage = () => {
           value={email}
           name={"email"}
           isIcon={false}
-          placeholder={'E-mail'}
+          placeholder={"E-mail"}
         />
         <PasswordInput
           onChange={(e) => setPassword(e.target.value)}

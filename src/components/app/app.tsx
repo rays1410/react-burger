@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch  } from "react-redux";
 import { fetchIngredients } from "../../services/ingredientSlice";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import HomePage from "../../pages/home-page/home-page";
@@ -13,7 +13,6 @@ import AppHeader from "../app-header/app-header";
 import { checkUserAuth, getNewAccessToken } from "../../services/authSlice";
 import IngredientPage from "../../pages/ingredient-page/ingredient-page";
 import Modal from "../modal/modal";
-import { getCookie } from "../../utils/cookieUtils";
 import {
   ERR_ACCESS_TOKEN_EXPIRED,
   ERR_ACCESS_TOKEN_UNDEFINED,
@@ -115,7 +114,7 @@ function App() {
   // const dataStatus = useSelector((state: any) => state.ingredients.status);
   const dataStatus = useAppSelector((state) => state.ingredients.status);
 
-  const { isUserData, loading } = useAppSelector((state) => state.authSlice);
+  const { isUserData } = useAppSelector((state) => state.authSlice);
 
   useEffect(() => {
     // Тянем ингредиенты
@@ -140,7 +139,7 @@ function App() {
           }
         });
     }
-  }, []);
+  }, [dispatch, isUserData, dataStatus ]);
 
   return router;
 

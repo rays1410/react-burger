@@ -1,14 +1,12 @@
-import React from "react";
-import { useLocation, useParams } from "react-router";
+import { Navigate, useParams } from "react-router";
 import { useAppSelector } from "../..";
 import styles from "./ingredient-page.module.css";
 import { nutrientsNameMapping } from "../../utils/constants";
-import { useDispatch } from "react-redux";
 import { IngredientObject } from "../../utils/interfaces";
+import { PATH_ERR } from "../../utils/pageNames";
 
 const IngredientPage = () => {
   const { id } = useParams();
-  const dispatch = useDispatch();
 
   const ingredientsData = useAppSelector(
     (state) => state.ingredients.ingredientsData
@@ -38,7 +36,7 @@ const IngredientPage = () => {
       </div>
     </div>
   ) : (
-    <div>Ошибка</div>
+    <Navigate to={PATH_ERR} />
   );
 };
 

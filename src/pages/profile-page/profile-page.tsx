@@ -11,12 +11,13 @@ import {
 import { useDispatch } from "react-redux";
 import { changeUserData, userLogout } from "../../services/authSlice";
 import { PATH_ADD_ORDERS, PATH_PROFILE } from "../../utils/pageNames";
+import { useEffect } from "react";
 
 const ProfilePage = () => {
   const activeClassName = `${profileStyles.disabledLink} text text_type_main-medium`;
 
   const disabledClassName = `text text_type_main-medium`;
-  const { userInfo, userMessage, loading } = useAppSelector(
+  const { userInfo, userMessage, isUserLogged } = useAppSelector(
     (state) => state.authSlice
   );
 
@@ -43,10 +44,14 @@ const ProfilePage = () => {
     setPassword("");
   };
 
+  useEffect(() => {
+    if (!isUserLogged) {
+      navigate(PATH_PROFILE);
+    }
+  }, [navigate, isUserLogged]);
+
   const handleLogout = () => {
-    dispatch(userLogout())
-      .unwrap()
-      .then(() => navigate("/"));
+    dispatch(userLogout());
   };
 
   return (

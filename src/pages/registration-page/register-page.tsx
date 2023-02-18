@@ -6,12 +6,11 @@ import {
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import registerStyles from "./register.module.css";
 import { Link } from "react-router-dom";
-import { useState, useEffect, EffectCallback } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { clearUserMessage, userRegister } from "../../services/authSlice";
+import { userRegister } from "../../services/authSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch, useAppSelector } from "../..";
-import { PayloadAction } from "@reduxjs/toolkit";
 import { PATH_LOGIN, PATH_PROFILE } from "../../utils/pageNames";
 
 const RegisterPage = () => {
@@ -19,7 +18,7 @@ const RegisterPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { loading, isUserLogged, userMessage, isAuthChecked } = useAppSelector(
+  const { isUserLogged, userMessage } = useAppSelector(
     (state) => state.authSlice
   );
 
@@ -30,7 +29,7 @@ const RegisterPage = () => {
     if (isUserLogged) {
       navigate(PATH_PROFILE);
     }
-  }, [isUserLogged]);
+  }, [navigate, isUserLogged]);
 
   const handleRegistration = () => {
     dispatch(userRegister({ email, password, name }));
