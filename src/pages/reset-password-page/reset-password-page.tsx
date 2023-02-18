@@ -7,9 +7,8 @@ import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { AppDispatch, useAppSelector } from "../..";
-import {
-  resetPassword,
-} from "../../services/resetPasswordSlice";
+import { clearUserMessage } from "../../services/authSlice";
+import { resetPassword } from "../../services/resetPasswordSlice";
 import { BASE_URL } from "../../utils/constants";
 
 import resetPasswrodStyles from "./reset-password.module.css";
@@ -18,12 +17,16 @@ const ResetPasswordPage = () => {
   const [emailToken, setEmailToken] = useState("");
 
   const dispatch = useDispatch<AppDispatch>();
-  const { changeSuccess, userMessage  } = useAppSelector(
+  const { changeSuccess, userMessage } = useAppSelector(
     (store) => store.resetPasswordSlice
   );
 
   const handleResetPassword = () =>
     dispatch(resetPassword({ newPassword, emailToken }));
+
+  // useEffect((): ReturnType<any> => {
+  //   return () => dispatch(clearUserMessage());
+  // }, []);
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -63,7 +66,7 @@ const ResetPasswordPage = () => {
         </Button>
       </div>
       <p className={"text text_type_main-default text_color_inactive"}>
-        {userMessage ? userMessage : "kek"}
+        {userMessage ? userMessage : null}
       </p>
     </div>
   );

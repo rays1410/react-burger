@@ -6,23 +6,30 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, redirect, useNavigate } from "react-router-dom";
 import { AppDispatch, useAppSelector } from "../..";
+import { clearUserMessage } from "../../services/authSlice";
 import { forgotPassword } from "../../services/resetPasswordSlice";
+import { PATH_RESET_PASSWORD } from "../../utils/pageNames";
 
 import forgotPasswordStyles from "./forgot-password.module.css";
 
 const ForgotPasswordPage = () => {
-  const [email, setEmail] = useState("dreyz@yandex.ru");
+  const [email, setEmail] = useState("");
   const dispatch = useDispatch<AppDispatch>();
 
-  const { loading, requestSuccess, userMessage } = useAppSelector(
+  const { requestSuccess, userMessage } = useAppSelector(
     (store) => store.resetPasswordSlice
   );
+
+  useEffect((): ReturnType<any> => {
+    return () => dispatch(clearUserMessage());
+  }, []);
+
 
   const navigate = useNavigate();
   useEffect(() => {
     console.log(requestSuccess);
     if (requestSuccess) {
-      navigate("/reset-password");
+      navigate(PATH_RESET_PASSWORD);
     }
   }, [requestSuccess]);
 

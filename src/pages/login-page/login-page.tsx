@@ -6,28 +6,25 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import loginStyles from "./login.module.css";
 import { useState, useEffect } from "react";
-import { BASE_URL } from "../../utils/constants";
-import { loginUser } from "../../utils/utils";
 import { useDispatch } from "react-redux";
-import { userLogin } from "../../services/authSlice";
+import { clearUserMessage, userLogin } from "../../services/authSlice";
 import { AppDispatch, useAppSelector } from "../..";
+import { PATH_FORGOT_PASSWORD, PATH_PROFILE, PATH_REGISTER } from "../../utils/pageNames";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("dreyz@yandex.ru");
-  const [password, setPassword] = useState("password11");
-  const { userInfo, loading, userMessage } = useAppSelector(
-    (state) => state.authSlice
-  );
-
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { userInfo, userMessage } = useAppSelector((state) => state.authSlice);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const handleLogin = () => {
+    dispatch(clearUserMessage());
     dispatch(userLogin({ email, password }))
       .unwrap()
       .then(() => {
         if (userInfo) {
-          navigate("/profile");
+          navigate(PATH_PROFILE);
         }
       })
       .catch((err) => {
@@ -35,9 +32,7 @@ const LoginPage = () => {
       });
   };
 
-  return loading ? (
-    <div>{"Loading"}</div>
-  ) : (
+  return (
     <div className={loginStyles.mainBlock}>
       <div className={loginStyles.upperBlock}>
         <p className="text text_type_main-medium">Вход</p>
@@ -46,6 +41,7 @@ const LoginPage = () => {
           value={email}
           name={"email"}
           isIcon={false}
+          placeholder={'E-mail'}
         />
         <PasswordInput
           onChange={(e) => setPassword(e.target.value)}
@@ -64,20 +60,26 @@ const LoginPage = () => {
       </div>
 
       <div className={loginStyles.lowerBlock}>
-        <span className="text text_type_main-small">
-          <p>
+        <span>
+          <p className={"text text_type_main-default text_color_inactive"}>
             Вы — новый пользователь?{" "}
-            <Link to="/register">Зарегистрироваться</Link>
+            <Link className={loginStyles.linkColor} to={PATH_REGISTER}>
+              Зарегистрироваться
+            </Link>
           </p>
         </span>
-        <span className="text text_type_main-small">
-          <p>
+        <span>
+          <p className={"text text_type_main-default text_color_inactive"}>
             Забыли пароль?{" "}
-            <Link to="/forgot-password">Восстановить пароль</Link>
+            <Link className={loginStyles.linkColor} to={PATH_FORGOT_PASSWORD}>
+              Восстановить пароль
+            </Link>
           </p>
         </span>
 
-        {userMessage ? <p>{userMessage}</p> : null}
+        {userMessage ? (
+          <p className={"text text_type_main-default"}>{userMessage}</p>
+        ) : null}
       </div>
     </div>
   );

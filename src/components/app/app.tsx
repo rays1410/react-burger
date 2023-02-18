@@ -20,6 +20,18 @@ import {
 } from "../../utils/statusConstants";
 import IngredientDetails from "../ingredient-details/ingredient-details";
 import { AppDispatch, useAppSelector } from "../..";
+import ErrorPage from "../../pages/error-page/error-page";
+import {
+  PATH_ADD_ORDERS,
+  PATH_ERR,
+  PATH_FORGOT_PASSWORD,
+  PATH_HOME,
+  PATH_INGREDIENTS_ID,
+  PATH_LOGIN,
+  PATH_PROFILE,
+  PATH_REGISTER,
+  PATH_RESET_PASSWORD,
+} from "../../utils/pageNames";
 
 function App() {
   const location = useLocation();
@@ -31,16 +43,16 @@ function App() {
       <AppHeader />
 
       <Routes location={background || location}>
-        <Route path="ingredients/:id" element={<IngredientPage />} />
+        <Route path={PATH_INGREDIENTS_ID} element={<IngredientPage />} />
       </Routes>
       <Routes>
         {background && (
           <Route
-            path="ingredients/:id"
+            path={PATH_INGREDIENTS_ID}
             element={
               <Modal
                 header={"Детали ингредиента"}
-                onClosedModal={() => navigate("/")}
+                onClosedModal={() => navigate(PATH_HOME)}
               >
                 <IngredientDetails />
               </Modal>
@@ -50,49 +62,49 @@ function App() {
       </Routes>
 
       <Routes>
-        <Route path="/" element={<HomePage />} />
-
+        <Route path={PATH_HOME} element={<HomePage />} />
+        <Route path={PATH_ERR} element={<ErrorPage />} />
         <Route
-          path="/register"
+          path={PATH_REGISTER}
           element={
-            <ProtectedRoute redirectTo={"/"} onlyUnAuth={true}>
+            <ProtectedRoute redirectTo={PATH_HOME} onlyUnAuth={true}>
               <RegisterPage />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/login"
+          path={PATH_LOGIN}
           element={
-            <ProtectedRoute redirectTo={"/"} onlyUnAuth={true}>
+            <ProtectedRoute redirectTo={PATH_HOME} onlyUnAuth={true}>
               <LoginPage />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/reset-password"
+          path={PATH_RESET_PASSWORD}
           element={
-            <ProtectedRoute redirectTo={"/"} onlyUnAuth={true}>
+            <ProtectedRoute redirectTo={PATH_HOME} onlyUnAuth={true}>
               <ResetPasswordPage />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/forgot-password"
+          path={PATH_FORGOT_PASSWORD}
           element={
-            <ProtectedRoute redirectTo={"/"} onlyUnAuth={true}>
+            <ProtectedRoute redirectTo={PATH_HOME} onlyUnAuth={true}>
               <ForgotPasswordPage />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/profile"
+          path={PATH_PROFILE}
           element={
-            <ProtectedRoute redirectTo={"/login"} onlyUnAuth={false}>
+            <ProtectedRoute redirectTo={PATH_LOGIN} onlyUnAuth={false}>
               <ProfilePage />
             </ProtectedRoute>
           }
         >
-          <Route path=":orders"></Route>
+          <Route path={PATH_ADD_ORDERS}></Route>
         </Route>
       </Routes>
     </>

@@ -1,8 +1,6 @@
 import {
   createSlice,
   createAsyncThunk,
-  PayloadAction,
-  nanoid,
 } from "@reduxjs/toolkit";
 
 import {
@@ -177,7 +175,11 @@ interface StateType {
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    clearUserMessage: (state: StateType) => {
+      state.userMessage = null;
+    },
+  },
 
   extraReducers: {
     // Обработка регистрации
@@ -307,5 +309,7 @@ const authSlice = createSlice({
     },
   },
 });
+
+export const { clearUserMessage } = authSlice.actions;
 
 export default authSlice.reducer;

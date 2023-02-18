@@ -7,7 +7,7 @@ export const ERR_USER_DATA_ISNT_UPDATED =
   "Ошибка: не получилось обновить данные - сервер не отвечает, попробуйте ещё раз";
 export const ERR_USER_LOGOUT =
   "Ошибка: не получилось выйти - сервер не отвечает: попробуйте ещё раз";
-export const ERR_USER_LOGIN = "Ошибка: неправильный логин или пароль.";
+export const ERR_USER_LOGIN = "Ошибка: неправильный логин или пароль";
 export const ERR_USER_REGISTRATION =
   "Ошибка: не получилось зарегистрироваться - сервер не отвечает, либо я криво написал код: попробуйте ещё раз";
 export const ERR_SERVER = "Сервер не отвечает";

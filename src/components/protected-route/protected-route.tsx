@@ -17,7 +17,6 @@ export default function ProtectedRoute({
   );
 
   if (!isAuthChecked) {
-    console.log("загрузка...");
     return <div>Loading...</div>;
   }
 

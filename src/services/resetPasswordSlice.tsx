@@ -31,7 +31,7 @@ export const forgotPassword = createAsyncThunk(
 export const resetPassword = createAsyncThunk(
   "auth/resetPassword",
   async (
-    { newPassword, emailToken }: { newPassword: string; emailToken: string }, // ?
+    { newPassword, emailToken }: { newPassword: string; emailToken: string },
     thunkAPI
   ) => {
     try {
