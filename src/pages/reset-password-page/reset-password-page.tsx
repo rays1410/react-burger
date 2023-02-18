@@ -10,6 +10,7 @@ import { AppDispatch, useAppSelector } from "../..";
 import { clearUserMessage } from "../../services/authSlice";
 import { resetPassword } from "../../services/resetPasswordSlice";
 import { BASE_URL } from "../../utils/constants";
+import { PATH_LOGIN } from "../../utils/pageNames";
 
 import resetPasswrodStyles from "./reset-password.module.css";
 const ResetPasswordPage = () => {
@@ -20,21 +21,16 @@ const ResetPasswordPage = () => {
   const { changeSuccess, userMessage } = useAppSelector(
     (store) => store.resetPasswordSlice
   );
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (changeSuccess) {
+      navigate(PATH_LOGIN);
+    }
+  }, [changeSuccess]);
 
   const handleResetPassword = () =>
     dispatch(resetPassword({ newPassword, emailToken }));
-
-  // useEffect((): ReturnType<any> => {
-  //   return () => dispatch(clearUserMessage());
-  // }, []);
-
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (changeSuccess) {
-      navigate("/");
-    } else {
-    }
-  }, [changeSuccess]);
 
   return (
     <div className={resetPasswrodStyles.mainBlock}>

@@ -54,11 +54,9 @@ export const userLogin = createAsyncThunk(
   ) => {
     try {
       const { data } = await userLoginRequest(email, password);
-      console.log(data);
 
       return data;
     } catch (error) {
-      console.log("catch thunk");
       return thunkAPI.rejectWithValue(ERR_USER_LOGIN);
     }
   }
@@ -69,13 +67,10 @@ export const userLogout = createAsyncThunk(
   async (_, thunkAPI) => {
     const refreshToken = getCookie(REFRESH_TOKEN_NAME);
     try {
-      console.log(refreshToken);
       const { data } = await userLogoutRequest(refreshToken);
-      console.log(data);
 
       return data;
     } catch (error) {
-      console.log("logout err");
       return thunkAPI.rejectWithValue(ERR_USER_LOGOUT);
     }
   }
@@ -91,7 +86,6 @@ export const changeUserData = createAsyncThunk(
     }: { email: string; name: string; password: string },
     thunkAPI
   ) => {
-    console.log("ya tut");
     try {
       const accessToken = getCookie(ACCESS_TOKEN_NAME);
       const { data } = await changeUserDataRequest(
@@ -132,9 +126,7 @@ export const checkUserAuth = createAsyncThunk(
   "auth/checkUserAuth",
   async (_, thunkAPI) => {
     const accessToken = getCookie(ACCESS_TOKEN_NAME);
-    console.log("app err");
     if (accessToken) {
-      console.log("аксес есть, делаем запрос");
       try {
         const { data } = await checkAuthRequest(accessToken);
         return data;
@@ -209,7 +201,6 @@ const authSlice = createSlice({
       state.loading = true;
     },
     [userLogin.fulfilled.type]: (state: StateType, { payload }) => {
-      console.log("fulfilled");
       state.userInfo = payload.user;
       state.isUserData = true;
       state.isAuthChecked = true;

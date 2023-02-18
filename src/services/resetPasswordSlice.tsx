@@ -19,7 +19,6 @@ export const forgotPassword = createAsyncThunk(
   "auth/forgotPassword",
   async (email: string, thunkAPI) => {
     try {
-      console.log(`Письмо отправлено на ${email}`);
       const { data } = await forgotPasswordRequest(email);
       return data;
     } catch (error) {
@@ -35,7 +34,6 @@ export const resetPassword = createAsyncThunk(
     thunkAPI
   ) => {
     try {
-      console.log(`Новый пароль ${newPassword}, токен ${emailToken}`);
       const { data } = await resetPasswordRequest(newPassword, emailToken);
       return data;
     } catch (error) {
@@ -87,16 +85,17 @@ const resetPasswordSlice = createSlice({
     },
     [resetPassword.fulfilled.type]: (state: StateType) => {
       state.userMessage = SUCC_PASSWORD_CHANGE;
-      state.loading = true;
+      state.loading = false;
       state.changeSuccess = true;
     },
     [resetPassword.rejected.type]: (state: StateType, { payload }) => {
       state.devError = payload;
       state.userMessage = ERR_USER_RESET_PASSWORD;
       state.loading = false;
+      state.changeSuccess = false;
+
     },
   },
-
 });
 
 export default resetPasswordSlice.reducer;

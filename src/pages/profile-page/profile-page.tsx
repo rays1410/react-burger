@@ -10,6 +10,7 @@ import {
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import { useDispatch } from "react-redux";
 import { changeUserData, userLogout } from "../../services/authSlice";
+import { PATH_ADD_ORDERS, PATH_PROFILE } from "../../utils/pageNames";
 
 const ProfilePage = () => {
   const activeClassName = `${profileStyles.disabledLink} text text_type_main-medium`;
@@ -48,15 +49,13 @@ const ProfilePage = () => {
       .then(() => navigate("/"));
   };
 
-  return loading ? (
-    <div>{"Loading"}</div>
-  ) : (
+  return (
     <div className={profileStyles.mainBlock}>
       <div className={profileStyles.content}>
         <div className={profileStyles.leftBlock}>
           <nav className={profileStyles.navMenu}>
             <NavLink
-              to="/profile"
+              to={PATH_PROFILE}
               className={({ isActive }) =>
                 isActive ? activeClassName : disabledClassName
               }
@@ -65,7 +64,7 @@ const ProfilePage = () => {
               Профиль
             </NavLink>
             <NavLink
-              to="orders"
+              to={PATH_ADD_ORDERS}
               className={({ isActive }) =>
                 isActive ? activeClassName : disabledClassName
               }
@@ -136,7 +135,7 @@ const ProfilePage = () => {
             </Button>
           </div>
           <p className={"text text_type_main-default text_color_inactive"}>
-            {userMessage ? userMessage : "kek"}
+            {userMessage ? userMessage : null}
           </p>
         </div>
       </div>

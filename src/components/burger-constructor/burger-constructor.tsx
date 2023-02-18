@@ -76,11 +76,6 @@ const BurgerConstructor = () => {
       // Оборачиваем ингредиенты в булки
       const idArray = [currentBun._id, ...ingredientsId, currentBun._id];
 
-      // Запрос
-      // dispatch(sendOrderRequest(idArray)).then((payload) => {
-      //   console.log(payload)
-      //   return payload ? dispatch(reset()) : null;
-      // });
       dispatch(sendOrderRequest(idArray)).then((payload) => {
         return payload;
       });

@@ -14,9 +14,15 @@ import { PATH_FORGOT_PASSWORD, PATH_PROFILE, PATH_REGISTER } from "../../utils/p
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { userInfo, userMessage } = useAppSelector((state) => state.authSlice);
+  const { userInfo, userMessage, isUserLogged } = useAppSelector((state) => state.authSlice);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isUserLogged) {
+      navigate(PATH_PROFILE);
+    }
+  }, [isUserLogged]);
 
   const handleLogin = () => {
     dispatch(clearUserMessage());
@@ -28,7 +34,6 @@ const LoginPage = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
       });
   };
 

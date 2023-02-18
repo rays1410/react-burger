@@ -8,7 +8,7 @@ import { Link, redirect, useNavigate } from "react-router-dom";
 import { AppDispatch, useAppSelector } from "../..";
 import { clearUserMessage } from "../../services/authSlice";
 import { forgotPassword } from "../../services/resetPasswordSlice";
-import { PATH_RESET_PASSWORD } from "../../utils/pageNames";
+import { PATH_LOGIN, PATH_RESET_PASSWORD } from "../../utils/pageNames";
 
 import forgotPasswordStyles from "./forgot-password.module.css";
 
@@ -19,15 +19,9 @@ const ForgotPasswordPage = () => {
   const { requestSuccess, userMessage } = useAppSelector(
     (store) => store.resetPasswordSlice
   );
-
-  useEffect((): ReturnType<any> => {
-    return () => dispatch(clearUserMessage());
-  }, []);
-
-
   const navigate = useNavigate();
+
   useEffect(() => {
-    console.log(requestSuccess);
     if (requestSuccess) {
       navigate(PATH_RESET_PASSWORD);
     }
@@ -58,12 +52,12 @@ const ForgotPasswordPage = () => {
         <span className="text text_type_main-default">
           <p className="text_color_inactive">
             Вспомнили пароль?{" "}
-            <Link className={forgotPasswordStyles.linkColor} to="/login">
+            <Link className={forgotPasswordStyles.linkColor} to={PATH_LOGIN}>
               Войти
             </Link>
           </p>
           <p className={"text text_type_main-default text_color_inactive"}>
-            {userMessage ? userMessage : "kek"}
+            {userMessage ? userMessage : null}
           </p>
         </span>
       </div>

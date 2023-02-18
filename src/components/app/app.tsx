@@ -142,11 +142,8 @@ function App() {
     }
   }, []);
 
-  return dataStatus === "succeeded" && !loading ? (
-    router
-  ) : (
-    <div>Loading...</div>
-  );
+  return router;
+
 }
 
 export default App;

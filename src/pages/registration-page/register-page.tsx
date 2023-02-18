@@ -12,21 +12,25 @@ import { clearUserMessage, userRegister } from "../../services/authSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch, useAppSelector } from "../..";
 import { PayloadAction } from "@reduxjs/toolkit";
+import { PATH_LOGIN, PATH_PROFILE } from "../../utils/pageNames";
 
 const RegisterPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { loading, userInfo, userMessage, isAuthChecked } = useAppSelector(
+  const { loading, isUserLogged, userMessage, isAuthChecked } = useAppSelector(
     (state) => state.authSlice
   );
 
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
-  // useEffect((): ReturnType<any> => {
-  //   return () => dispatch(clearUserMessage());
-  // }, []);
+  useEffect(() => {
+    if (isUserLogged) {
+      navigate(PATH_PROFILE);
+    }
+  }, [isUserLogged]);
 
   const handleRegistration = () => {
     dispatch(userRegister({ email, password, name }));
@@ -73,7 +77,7 @@ const RegisterPage = () => {
           <span className="text text_type_main-default">
             <p className="text_color_inactive">
               Уже зарегистрированы?{" "}
-              <Link className={registerStyles.linkColor} to="/login">
+              <Link className={registerStyles.linkColor} to={PATH_LOGIN}>
                 Войти
               </Link>
             </p>

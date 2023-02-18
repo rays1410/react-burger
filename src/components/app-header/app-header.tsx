@@ -7,6 +7,7 @@ import {
   ProfileIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import { Link } from "react-router-dom";
+import { PATH_HOME, PATH_PROFILE } from "../../utils/pageNames";
 
 const AppHeader = () => {
   return (
@@ -15,7 +16,7 @@ const AppHeader = () => {
         <div className={headerStyles.headerLeft}>
           <div className={headerStyles.headerItem}>
             <Link
-              to="/"
+              to={PATH_HOME}
               className={`${headerStyles.headerLink} text text_type_main-default`}
             >
               <BurgerIcon type="primary" />
@@ -25,7 +26,7 @@ const AppHeader = () => {
 
           <div className={headerStyles.headerItem}>
             <Link
-              to="/"
+              to={PATH_HOME}
               className={`${headerStyles.headerLink} ${headerStyles.disabled} text text_type_main-default text_color_inactive`}
             >
               <ListIcon type="secondary" />
@@ -41,7 +42,7 @@ const AppHeader = () => {
         <div className={headerStyles.headerRight}>
           <div className={headerStyles.headerItem}>
             <Link
-              to="/profile"
+              to={PATH_PROFILE}
               className={`${headerStyles.headerLink} text text_type_main-default text_color_active`}
             >
               <ProfileIcon type="secondary" />
