@@ -5,16 +5,16 @@ import {
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, redirect, useNavigate } from "react-router-dom";
-import { useAppSelector } from "../..";
-import { forgotPasswordRequest } from "../../services/resetPasswordSlice";
+import { AppDispatch, useAppSelector } from "../..";
+import { forgotPassword } from "../../services/resetPasswordSlice";
 
 import forgotPasswordStyles from "./forgot-password.module.css";
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("dreyz@yandex.ru");
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
-  const { loading, requestSuccess, userMessage, error } = useAppSelector(
+  const { loading, requestSuccess, userMessage } = useAppSelector(
     (store) => store.resetPasswordSlice
   );
 
@@ -26,7 +26,7 @@ const ForgotPasswordPage = () => {
     }
   }, [requestSuccess]);
 
-  const handleForgotPassword = () => dispatch(forgotPasswordRequest({ email }));
+  const handleForgotPassword = () => dispatch(forgotPassword(email));
 
   return (
     <div className={forgotPasswordStyles.mainBlock}>
@@ -55,7 +55,9 @@ const ForgotPasswordPage = () => {
               Войти
             </Link>
           </p>
-          {error ? <p>Ошибка: {error}</p> : null}
+          <p className={"text text_type_main-default text_color_inactive"}>
+            {userMessage ? userMessage : "kek"}
+          </p>
         </span>
       </div>
     </div>

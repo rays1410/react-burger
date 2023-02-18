@@ -10,18 +10,18 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { userRegister } from "../../services/authSlice";
 import { useDispatch } from "react-redux";
-import { useAppSelector } from "../..";
+import { AppDispatch, useAppSelector } from "../..";
 
 const RegisterPage = () => {
   const [name, setName] = useState("andrey");
   const [email, setEmail] = useState("dreyz@yandex.ru");
   const [password, setPassword] = useState("password");
 
-  const { loading, userInfo, error, isAuthChecked } = useAppSelector(
+  const { loading, userInfo, userMessage, isAuthChecked } = useAppSelector(
     (state) => state.authSlice
   );
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const handleRegistration = () => {
@@ -73,7 +73,7 @@ const RegisterPage = () => {
                 Войти
               </Link>
             </p>
-            {error ? <p>Ошибка: {error}</p> : null}
+            {userMessage ? <p>Ошибка: {userMessage}</p> : null}
           </span>
         </div>
       </div>

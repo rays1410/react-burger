@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { useAppSelector } from "../..";
+import { AppDispatch, useAppSelector } from "../..";
 import profileStyles from "./profile.module.css";
 import { useState } from "react";
 import {
@@ -9,11 +9,7 @@ import {
   PasswordInput,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import { useDispatch } from "react-redux";
-import {
-  userDelete,
-  changeUserData,
-  userLogout,
-} from "../../services/authSlice";
+import { changeUserData, userLogout } from "../../services/authSlice";
 
 const ProfilePage = () => {
   const activeClassName = `${profileStyles.disabledLink} text text_type_main-medium`;
@@ -27,7 +23,7 @@ const ProfilePage = () => {
   const [email, setEmail] = useState(userInfo.email);
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const isDataChanged =
     name !== userInfo.name || email !== userInfo.email || password.length !== 0;
@@ -46,8 +42,7 @@ const ProfilePage = () => {
     setPassword("");
   };
 
-  const handleLogout = async (e) => {
-    e.preventDefault();
+  const handleLogout = () => {
     dispatch(userLogout())
       .unwrap()
       .then(() => navigate("/"));
@@ -82,10 +77,8 @@ const ProfilePage = () => {
               className={({ isActive }) =>
                 isActive ? activeClassName : disabledClassName
               }
-              onClick={(e) => {
-                handleLogout(e);
-              }}
-              to={'/'}
+              onClick={handleLogout}
+              to={"/"}
               end
             >
               Выход
@@ -106,7 +99,6 @@ const ProfilePage = () => {
             extraClass="ml-1"
           />
           <EmailInput
-            type={"text"}
             placeholder={"Логин"}
             onChange={(e) => setEmail(e.target.value)}
             value={email}
@@ -115,7 +107,6 @@ const ProfilePage = () => {
             extraClass="ml-1"
           />
           <PasswordInput
-            type={"password"}
             placeholder={"Пароль"}
             onChange={(e) => setPassword(e.target.value)}
             value={password}

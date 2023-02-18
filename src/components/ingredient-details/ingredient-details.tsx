@@ -4,7 +4,6 @@ import { IngredientObject } from "../../utils/interfaces";
 import { useAppSelector } from "../..";
 
 const IngredientDetails = () => {
-
   // Вытаскиваем ингредиент, который будем показывать в модалке
   const modalIngredient = useAppSelector(
     (state) => state.ingredients.modalIngredient

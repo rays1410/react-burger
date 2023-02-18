@@ -10,7 +10,7 @@ import { BASE_URL } from "../../utils/constants";
 import { loginUser } from "../../utils/utils";
 import { useDispatch } from "react-redux";
 import { userLogin } from "../../services/authSlice";
-import { useAppSelector } from "../..";
+import { AppDispatch, useAppSelector } from "../..";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("dreyz@yandex.ru");
@@ -19,7 +19,7 @@ const LoginPage = () => {
     (state) => state.authSlice
   );
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const handleLogin = () => {

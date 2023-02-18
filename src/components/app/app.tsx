@@ -17,8 +17,9 @@ import { getCookie } from "../../utils/cookieUtils";
 import {
   ERR_ACCESS_TOKEN_EXPIRED,
   ERR_ACCESS_TOKEN_UNDEFINED,
-} from "../../utils/constants";
+} from "../../utils/statusConstants";
 import IngredientDetails from "../ingredient-details/ingredient-details";
+import { AppDispatch, useAppSelector } from "../..";
 
 function App() {
   const location = useLocation();
@@ -54,7 +55,7 @@ function App() {
         <Route
           path="/register"
           element={
-            <ProtectedRoute onlyUnAuth={true}>
+            <ProtectedRoute redirectTo={"/"} onlyUnAuth={true}>
               <RegisterPage />
             </ProtectedRoute>
           }
@@ -62,7 +63,7 @@ function App() {
         <Route
           path="/login"
           element={
-            <ProtectedRoute onlyUnAuth={true}>
+            <ProtectedRoute redirectTo={"/"} onlyUnAuth={true}>
               <LoginPage />
             </ProtectedRoute>
           }
@@ -70,7 +71,7 @@ function App() {
         <Route
           path="/reset-password"
           element={
-            <ProtectedRoute onlyUnAuth={true}>
+            <ProtectedRoute redirectTo={"/"} onlyUnAuth={true}>
               <ResetPasswordPage />
             </ProtectedRoute>
           }
@@ -78,31 +79,31 @@ function App() {
         <Route
           path="/forgot-password"
           element={
-            <ProtectedRoute onlyUnAuth={true}>
+            <ProtectedRoute redirectTo={"/"} onlyUnAuth={true}>
               <ForgotPasswordPage />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/profile/*"
+          path="/profile"
           element={
             <ProtectedRoute redirectTo={"/login"} onlyUnAuth={false}>
               <ProfilePage />
             </ProtectedRoute>
           }
         >
+          <Route path=":orders"></Route>
+        </Route>
       </Routes>
     </>
   );
 
-  // const dispatch = useDispatch<AppDispatch>();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useDispatch();
   // const dataStatus = useSelector((state: any) => state.ingredients.status);
-  const dataStatus = useSelector((state) => state.ingredients.status);
+  const dataStatus = useAppSelector((state) => state.ingredients.status);
 
-  const { userInfo, loading, isAuthChecked } = useSelector(
-    (state) => state.authSlice
-  );
+  const { isUserData, loading } = useAppSelector((state) => state.authSlice);
 
   useEffect(() => {
     // Тянем ингредиенты
@@ -112,7 +113,7 @@ function App() {
     // то проверяем является ли эта ошибка следствием протухшего
     // аксес токена и, если это она, запрашиваем новый токен
     // А потом снова запрашиваем auth
-    if (!userInfo) {
+    if (!isUserData) {
       dispatch(checkUserAuth())
         .unwrap()
         .catch((error) => {

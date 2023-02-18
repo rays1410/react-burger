@@ -4,26 +4,20 @@ import {
   PayloadAction,
   nanoid,
 } from "@reduxjs/toolkit";
+
 import {
-  ACCESS_TOKEN_NAME,
-  BASE_URL,
-  ERR_ACCESS_TOKEN_EXPIRED,
   ERR_ACCESS_TOKEN_ISNT_UPDATED,
   ERR_ACCESS_TOKEN_UNDEFINED,
   ERR_SERVER,
-  ERR_UNKNOWN,
   ERR_USER_DATA_ISNT_UPDATED,
   ERR_USER_LOGIN,
   ERR_USER_LOGOUT,
   ERR_USER_REGISTRATION,
-  REFRESH_TOKEN_NAME,
   SUCC_LOGIN,
   SUCC_REGISTRATION,
   SUCC_USER_DATA_UPDATE,
   SUCC_USER_LOGOUT,
-} from "../utils/constants";
-import { registerUser } from "../utils/utils";
-import { ERR_USER_ALREADY_EXIST } from "../utils/constants";
+} from "../utils/statusConstants";
 import { getCookie, setCookie, deleteCookie } from "../utils/cookieUtils";
 import {
   accessTokenRequest,
@@ -33,11 +27,18 @@ import {
   userLogoutRequest,
   userRegisterRequest,
 } from "../utils/authUtils";
-import axios from "axios";
+import { ACCESS_TOKEN_NAME, REFRESH_TOKEN_NAME } from "../utils/constants";
 
 export const userRegister = createAsyncThunk(
   "auth/register",
-  async ({ name, email, password }, thunkAPI) => {
+  async (
+    {
+      name,
+      email,
+      password,
+    }: { name: string; email: string; password: string },
+    thunkAPI
+  ) => {
     try {
       const { data } = await userRegisterRequest(name, email, password);
       return data;
@@ -49,7 +50,10 @@ export const userRegister = createAsyncThunk(
 
 export const userLogin = createAsyncThunk(
   "auth/login",
-  async ({ email, password }, thunkAPI) => {
+  async (
+    { email, password }: { email: string; password: string },
+    thunkAPI
+  ) => {
     try {
       const { data } = await userLoginRequest(email, password);
       console.log(data);
@@ -81,7 +85,14 @@ export const userLogout = createAsyncThunk(
 
 export const changeUserData = createAsyncThunk(
   "auth/changeUserData",
-  async ({ email, name, password }, thunkAPI) => {
+  async (
+    {
+      email,
+      name,
+      password,
+    }: { email: string; name: string; password: string },
+    thunkAPI
+  ) => {
     console.log("ya tut");
     try {
       const accessToken = getCookie(ACCESS_TOKEN_NAME);
@@ -123,12 +134,13 @@ export const checkUserAuth = createAsyncThunk(
   "auth/checkUserAuth",
   async (_, thunkAPI) => {
     const accessToken = getCookie(ACCESS_TOKEN_NAME);
+    console.log("app err");
     if (accessToken) {
       console.log("аксес есть, делаем запрос");
       try {
         const { data } = await checkAuthRequest(accessToken);
         return data;
-      } catch (error) {
+      } catch (error: any) {
         return thunkAPI.rejectWithValue(error.response.data.message);
       }
     } else {
@@ -140,35 +152,41 @@ export const checkUserAuth = createAsyncThunk(
 const initialState = {
   isAuthChecked: false,
   isUserLogged: false,
+  isUserData: false,
   loading: false,
-  userInfo: null,
+  userInfo: {} as UserInfoObject,
   userMessage: null,
   devError: null,
 };
 
+interface UserInfoObject {
+  email: string;
+  name: string;
+}
+
+interface StateType {
+  isAuthChecked: boolean;
+  isUserLogged: boolean;
+  isUserData: boolean;
+  loading: boolean;
+  userInfo: null | UserInfoObject;
+  userMessage: null | string;
+  devError: null | string;
+}
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {
-    authChecked: (state) => {
-      state.isAuthChecked = true;
-    },
-    userDelete: (state) => {
-      state.userInfo = null;
-      state.isAuthChecked = false;
-    },
-    toggleLoading: (state, action) => {
-      state.loading = action.payload;
-    },
-  },
+  reducers: {},
 
   extraReducers: {
     // Обработка регистрации
-    [userRegister.pending]: (state) => {
+    [userRegister.pending.type]: (state: StateType) => {
       state.loading = true;
     },
-    [userRegister.fulfilled]: (state, { payload }) => {
+    [userRegister.fulfilled.type]: (state: StateType, { payload }) => {
       state.userInfo = payload.user;
+      state.isUserData = true;
       state.isAuthChecked = true;
       state.isUserLogged = true;
       state.loading = false;
@@ -177,19 +195,21 @@ const authSlice = createSlice({
       setCookie(ACCESS_TOKEN_NAME, payload.accessToken);
       setCookie(REFRESH_TOKEN_NAME, payload.refreshToken);
     },
-    [userRegister.rejected]: (state, { payload }) => {
+    [userRegister.rejected.type]: (state: StateType, { payload }) => {
       state.loading = false;
+      state.isUserData = false;
       state.userMessage = ERR_USER_REGISTRATION;
       state.devError = payload;
     },
 
     // Обработка логина
-    [userLogin.pending]: (state) => {
+    [userLogin.pending.type]: (state: StateType) => {
       state.loading = true;
     },
-    [userLogin.fulfilled]: (state, { payload }) => {
+    [userLogin.fulfilled.type]: (state: StateType, { payload }) => {
       console.log("fulfilled");
       state.userInfo = payload.user;
+      state.isUserData = true;
       state.isAuthChecked = true;
       state.isUserLogged = true;
       state.loading = false;
@@ -198,34 +218,38 @@ const authSlice = createSlice({
       setCookie(ACCESS_TOKEN_NAME, payload.accessToken);
       setCookie(REFRESH_TOKEN_NAME, payload.refreshToken);
     },
-    [userLogin.rejected]: (state, { payload }) => {
+    [userLogin.rejected.type]: (state: StateType, { payload }) => {
       state.loading = false;
+      state.isUserData = false;
       state.userMessage = ERR_USER_LOGIN;
       state.devError = payload;
     },
 
     // Изменение данных юзера
-    [changeUserData.pending]: (state) => {
+    [changeUserData.pending.type]: (state: StateType) => {
       state.loading = true;
     },
-    [changeUserData.fulfilled]: (state, { payload }) => {
+    [changeUserData.fulfilled.type]: (state: StateType, { payload }) => {
       state.userInfo = payload.user;
+      state.isUserData = true;
       state.loading = false;
       state.userMessage = SUCC_USER_DATA_UPDATE;
       state.devError = null;
     },
-    [changeUserData.rejected]: (state, { payload }) => {
+    [changeUserData.rejected.type]: (state: StateType, { payload }) => {
       state.loading = false;
+      state.isUserData = false;
       state.devError = payload;
       state.userMessage = ERR_USER_DATA_ISNT_UPDATED;
     },
 
     // Логаут
-    [userLogout.pending]: (state) => {
+    [userLogout.pending.type]: (state: StateType) => {
       state.loading = true;
     },
-    [userLogout.fulfilled]: (state) => {
+    [userLogout.fulfilled.type]: (state: StateType) => {
       state.userInfo = null;
+      state.isUserData = false;
       state.isAuthChecked = true; // #
       state.isUserLogged = false;
       state.loading = false;
@@ -234,17 +258,18 @@ const authSlice = createSlice({
       deleteCookie(ACCESS_TOKEN_NAME);
       deleteCookie(REFRESH_TOKEN_NAME);
     },
-    [userLogout.rejected]: (state, { payload }) => {
+    [userLogout.rejected.type]: (state: StateType, { payload }) => {
       state.loading = false;
+      state.isUserData = false;
       state.devError = payload;
       state.userMessage = ERR_USER_LOGOUT;
     },
 
     // Новые токены
-    [getNewAccessToken.pending]: (state) => {
+    [getNewAccessToken.pending.type]: (state: StateType) => {
       state.loading = true;
     },
-    [getNewAccessToken.fulfilled]: (state, { payload }) => {
+    [getNewAccessToken.fulfilled.type]: (state: StateType, { payload }) => {
       state.loading = false;
       state.userMessage = null;
       state.devError = null;
@@ -253,40 +278,34 @@ const authSlice = createSlice({
       setCookie(ACCESS_TOKEN_NAME, payload.accessToken);
       setCookie(REFRESH_TOKEN_NAME, payload.refreshToken);
     },
-    [getNewAccessToken.rejected]: (state) => {
+    [getNewAccessToken.rejected.type]: (state: StateType) => {
       state.loading = false;
       state.devError = ERR_SERVER;
       state.userMessage = ERR_SERVER;
     },
 
     // Проверка auth
-    [checkUserAuth.pending]: (state) => {
+    [checkUserAuth.pending.type]: (state: StateType) => {
       state.loading = true;
     },
-    [checkUserAuth.fulfilled]: (state, { payload }) => {
+    [checkUserAuth.fulfilled.type]: (state: StateType, { payload }) => {
       state.userInfo = payload.user;
+      state.isUserData = true;
       state.isAuthChecked = true;
       state.isUserLogged = true;
       state.loading = false;
       state.userMessage = null;
       state.devError = null;
     },
-    [checkUserAuth.rejected]: (state, { payload }) => {
+    [checkUserAuth.rejected.type]: (state: StateType, { payload }) => {
       state.isAuthChecked = true;
+      state.isUserData = false;
       state.loading = false;
       state.devError = payload;
-      state.userError = null;
+      state.userMessage = null;
       state.devError = ERR_ACCESS_TOKEN_UNDEFINED;
     },
   },
 });
-
-export const {
-  storeRefreshToken,
-  authChecked,
-  jwtExpired,
-  userDelete,
-  toggleLoading,
-} = authSlice.actions;
 
 export default authSlice.reducer;

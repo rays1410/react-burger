@@ -7,6 +7,7 @@ import React from "react";
 import styles from "./order-page.module.css";
 
 const OrderPage = () => {
+  
   return <div className={styles.rightBlock}></div>;
 };
 

@@ -42,3 +42,8 @@ export interface ModalOverlayTypes {
   onClosed: any;
 }
 
+export interface ProtectedRouteTypes {
+  onlyUnAuth: boolean;
+  redirectTo: string;
+  children: React.ReactNode;
+}
