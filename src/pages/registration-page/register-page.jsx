@@ -2,12 +2,13 @@ import {
   EmailInput,
   Input,
   PasswordInput,
+  Button,
 } from "@ya.praktikum/react-developer-burger-ui-components";
-import loginStyles from "./register.module.css";
+import registerStyles from "./register.module.css";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { registerRequest } from "../../services/authSlice";
+import { userRegister } from "../../services/authSlice";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "../..";
 
@@ -24,15 +25,15 @@ const RegisterPage = () => {
   const navigate = useNavigate();
 
   const handleRegistration = () => {
-    dispatch(registerRequest({ email, password, name }));
+    dispatch(userRegister({ email, password, name }));
   };
 
   return loading ? (
     <div>{"Loading..."}</div>
   ) : (
     <>
-      <div className={loginStyles.mainBlock}>
-        <div className={loginStyles.upperBlock}>
+      <div className={registerStyles.mainBlock}>
+        <div className={registerStyles.upperBlock}>
           <p className="text text_type_main-medium">Регистрация</p>
           <Input
             type={"text"}
@@ -55,19 +56,26 @@ const RegisterPage = () => {
             name={"password"}
             extraClass="mb-2"
           />
-          <button type="submit" disabled={loading} onClick={handleRegistration}>
-            {loading ? "Loading..." : "Зарегистрироваться"}
-          </button>
+          <Button
+            onClick={handleRegistration}
+            htmlType="button"
+            type="primary"
+            size="large"
+          >
+            Зарегистрироваться
+          </Button>
         </div>
-      </div>
-
-      <div className={loginStyles.lowerBlock}>
-        <span className="text text_type_main-small">
-          <p>
-            Уже зарегистрированы? <Link to="/login">Войти</Link>
-          </p>
-          {error ? <p>Ошибка: {error}</p> : null}
-        </span>
+        <div className={registerStyles.lowerBlock}>
+          <span className="text text_type_main-default">
+            <p className="text_color_inactive">
+              Уже зарегистрированы?{" "}
+              <Link className={registerStyles.linkColor} to="/login">
+                Войти
+              </Link>
+            </p>
+            {error ? <p>Ошибка: {error}</p> : null}
+          </span>
+        </div>
       </div>
     </>
   );

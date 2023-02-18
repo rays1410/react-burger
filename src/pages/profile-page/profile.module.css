@@ -1,13 +1,32 @@
 .mainBlock {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr;
+  margin: auto;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  margin-top: 100px;
+
 }
 
 .leftBlock {
+  max-width: 320px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+  margin-top: 20px;
+}
+
+.navMenu {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
+
 
 .rightBlock {
   display: flex;
@@ -17,4 +36,16 @@
 
 .disabledLink {
   color: cadetblue;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  text-align: center;
+  gap:50px;
+}
+
+.hiddenButtons {
+  visibility: hidden;
 }

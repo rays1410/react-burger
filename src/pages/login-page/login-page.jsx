@@ -1,4 +1,5 @@
 import {
+  Button,
   EmailInput,
   PasswordInput,
 } from "@ya.praktikum/react-developer-burger-ui-components";
@@ -8,28 +9,31 @@ import { useState, useEffect } from "react";
 import { BASE_URL } from "../../utils/constants";
 import { loginUser } from "../../utils/utils";
 import { useDispatch } from "react-redux";
-import { loginRequest, logoutRequest } from "../../services/authSlice";
+import { userLogin } from "../../services/authSlice";
 import { useAppSelector } from "../..";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("dreyz@yandex.ru");
-  const [password, setPassword] = useState("password");
-
-  const { userInfo, error, isAccessTokenValid, userRefreshToken, loading } =
-    useAppSelector((state) => state.authSlice);
+  const [password, setPassword] = useState("password11");
+  const { userInfo, loading, userMessage } = useAppSelector(
+    (state) => state.authSlice
+  );
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
-    dispatch(loginRequest({ email, password }));
+  const handleLogin = () => {
+    dispatch(userLogin({ email, password }))
+      .unwrap()
+      .then(() => {
+        if (userInfo) {
+          navigate("/profile");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
-
-  useEffect(() => {
-    if (userInfo) {
-      navigate("/profile");
-    }
-  }, [userInfo, isAccessTokenValid]);
 
   return loading ? (
     <div>{"Loading"}</div>
@@ -49,7 +53,14 @@ const LoginPage = () => {
           name={"password"}
           extraClass="mb-2"
         />
-        <button onClick={handleLogin}>Войти</button>
+        <Button
+          onClick={handleLogin}
+          htmlType="button"
+          type="primary"
+          size="large"
+        >
+          Войти
+        </Button>
       </div>
 
       <div className={loginStyles.lowerBlock}>
@@ -66,7 +77,7 @@ const LoginPage = () => {
           </p>
         </span>
 
-        {error ? <p>Ошибка: {error}</p> : null}
+        {userMessage ? <p>{userMessage}</p> : null}
       </div>
     </div>
   );

@@ -14,6 +14,11 @@ import { checkUserAuth, getNewAccessToken } from "../../services/authSlice";
 import IngredientPage from "../../pages/ingredient-page/ingredient-page";
 import Modal from "../modal/modal";
 import { getCookie } from "../../utils/cookieUtils";
+import {
+  ERR_ACCESS_TOKEN_EXPIRED,
+  ERR_ACCESS_TOKEN_UNDEFINED,
+} from "../../utils/constants";
+import IngredientDetails from "../ingredient-details/ingredient-details";
 
 function App() {
   const location = useLocation();
@@ -36,7 +41,7 @@ function App() {
                 header={"Детали ингредиента"}
                 onClosedModal={() => navigate("/")}
               >
-                <IngredientPage />
+                <IngredientDetails />
               </Modal>
             }
           />
@@ -85,7 +90,7 @@ function App() {
               <ProfilePage />
             </ProtectedRoute>
           }
-        />
+        >
       </Routes>
     </>
   );
@@ -95,22 +100,40 @@ function App() {
   // const dataStatus = useSelector((state: any) => state.ingredients.status);
   const dataStatus = useSelector((state) => state.ingredients.status);
 
-  const { userInfo, userRefreshToken, isAccessTokenValid, loading } =
-    useSelector((state) => state.authSlice);
+  const { userInfo, loading, isAuthChecked } = useSelector(
+    (state) => state.authSlice
+  );
 
   useEffect(() => {
+    // Тянем ингредиенты
     if (dataStatus === "idle") dispatch(fetchIngredients());
 
+    // Диспатчим auth проверку, если thunk выдаст ошибку запроса,
+    // то проверяем является ли эта ошибка следствием протухшего
+    // аксес токена и, если это она, запрашиваем новый токен
+    // А потом снова запрашиваем auth
     if (!userInfo) {
-      dispatch(checkUserAuth());
+      dispatch(checkUserAuth())
+        .unwrap()
+        .catch((error) => {
+          if (
+            error === ERR_ACCESS_TOKEN_EXPIRED ||
+            error === ERR_ACCESS_TOKEN_UNDEFINED
+          ) {
+            dispatch(getNewAccessToken())
+              .unwrap()
+              .then(() => dispatch(checkUserAuth()))
+              .catch((error) => {});
+          }
+        });
     }
+  }, []);
 
-    if (!isAccessTokenValid && userRefreshToken) {
-      dispatch(getNewAccessToken());
-    }
-  }, [isAccessTokenValid]);
-
-  return dataStatus === "succeeded" && !loading ? router : <div>Loading...</div>;
+  return dataStatus === "succeeded" && !loading ? (
+    router
+  ) : (
+    <div>Loading...</div>
+  );
 }
 
 export default App;

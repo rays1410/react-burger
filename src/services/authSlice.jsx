@@ -4,31 +4,146 @@ import {
   PayloadAction,
   nanoid,
 } from "@reduxjs/toolkit";
-import { BASE_URL, ERR_UNKNOWN } from "../utils/constants";
-import { registerUser } from "../utils/utils";
-import axios from "axios";
-import { ERR_USER_ALREADY_EXIST } from "../utils/constants";
 import {
-  getCookie,
-  setCookie,
-  deleteCookie,
-  eraseCookie,
-} from "../utils/cookieUtils";
+  ACCESS_TOKEN_NAME,
+  BASE_URL,
+  ERR_ACCESS_TOKEN_EXPIRED,
+  ERR_ACCESS_TOKEN_ISNT_UPDATED,
+  ERR_ACCESS_TOKEN_UNDEFINED,
+  ERR_SERVER,
+  ERR_UNKNOWN,
+  ERR_USER_DATA_ISNT_UPDATED,
+  ERR_USER_LOGIN,
+  ERR_USER_LOGOUT,
+  ERR_USER_REGISTRATION,
+  REFRESH_TOKEN_NAME,
+  SUCC_LOGIN,
+  SUCC_REGISTRATION,
+  SUCC_USER_DATA_UPDATE,
+  SUCC_USER_LOGOUT,
+} from "../utils/constants";
+import { registerUser } from "../utils/utils";
+import { ERR_USER_ALREADY_EXIST } from "../utils/constants";
+import { getCookie, setCookie, deleteCookie } from "../utils/cookieUtils";
+import {
+  accessTokenRequest,
+  changeUserDataRequest,
+  checkAuthRequest,
+  userLoginRequest,
+  userLogoutRequest,
+  userRegisterRequest,
+} from "../utils/authUtils";
+import axios from "axios";
 
-const getRefreshToken = () => {
-  const token = getCookie("refreshToken");
-  return token ? token : null;
-};
+export const userRegister = createAsyncThunk(
+  "auth/register",
+  async ({ name, email, password }, thunkAPI) => {
+    try {
+      const { data } = await userRegisterRequest(name, email, password);
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(ERR_USER_REGISTRATION);
+    }
+  }
+);
+
+export const userLogin = createAsyncThunk(
+  "auth/login",
+  async ({ email, password }, thunkAPI) => {
+    try {
+      const { data } = await userLoginRequest(email, password);
+      console.log(data);
+
+      return data;
+    } catch (error) {
+      console.log("catch thunk");
+      return thunkAPI.rejectWithValue(ERR_USER_LOGIN);
+    }
+  }
+);
+
+export const userLogout = createAsyncThunk(
+  "auth/logout",
+  async (_, thunkAPI) => {
+    const refreshToken = getCookie(REFRESH_TOKEN_NAME);
+    try {
+      console.log(refreshToken);
+      const { data } = await userLogoutRequest(refreshToken);
+      console.log(data);
+
+      return data;
+    } catch (error) {
+      console.log("logout err");
+      return thunkAPI.rejectWithValue(ERR_USER_LOGOUT);
+    }
+  }
+);
+
+export const changeUserData = createAsyncThunk(
+  "auth/changeUserData",
+  async ({ email, name, password }, thunkAPI) => {
+    console.log("ya tut");
+    try {
+      const accessToken = getCookie(ACCESS_TOKEN_NAME);
+      const { data } = await changeUserDataRequest(
+        accessToken,
+        email,
+        name,
+        password
+      );
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(ERR_USER_DATA_ISNT_UPDATED);
+    }
+  }
+);
+
+export const getNewAccessToken = createAsyncThunk(
+  "auth/getNewAccessToken",
+  async (_, thunkAPI) => {
+    const refreshToken = getCookie(REFRESH_TOKEN_NAME);
+    try {
+      const { data } = await accessTokenRequest(refreshToken);
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(ERR_ACCESS_TOKEN_ISNT_UPDATED);
+    }
+  },
+  {
+    condition: () => {
+      const refreshToken = getCookie(REFRESH_TOKEN_NAME);
+      if (!refreshToken) {
+        return false; // нет рефреш токена, значит не идем за акссесом
+      }
+    },
+  }
+);
+
+export const checkUserAuth = createAsyncThunk(
+  "auth/checkUserAuth",
+  async (_, thunkAPI) => {
+    const accessToken = getCookie(ACCESS_TOKEN_NAME);
+    if (accessToken) {
+      console.log("аксес есть, делаем запрос");
+      try {
+        const { data } = await checkAuthRequest(accessToken);
+        return data;
+      } catch (error) {
+        return thunkAPI.rejectWithValue(error.response.data.message);
+      }
+    } else {
+      return thunkAPI.rejectWithValue(ERR_ACCESS_TOKEN_UNDEFINED);
+    }
+  }
+);
 
 const initialState = {
-  userInfo: null,
-  userAccessToken: null,
-  userRefreshToken: getRefreshToken(),
-  error: null,
-  isAccessTokenValid: false,
   isAuthChecked: false,
   isUserLogged: false,
   loading: false,
+  userInfo: null,
+  userMessage: null,
+  devError: null,
 };
 
 const authSlice = createSlice({
@@ -38,9 +153,6 @@ const authSlice = createSlice({
     authChecked: (state) => {
       state.isAuthChecked = true;
     },
-    jwtExpired: (state) => {
-      state.isAccessTokenValid = false;
-    },
     userDelete: (state) => {
       state.userInfo = null;
       state.isAuthChecked = false;
@@ -49,263 +161,125 @@ const authSlice = createSlice({
       state.loading = action.payload;
     },
   },
-  extraReducers(builder) {
-    builder
 
-      // registration
-      .addCase(registerRequest.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(registerRequest.fulfilled, (state, { payload }) => {
-        state.isAccessTokenValid = true;
-        state.isAuthChecked = true;
-        state.isUserLogged = true;
-        state.loading = false;
-        state.userInfo = payload.user;
-        setCookie("accessToken", payload.accessToken);
-        setCookie("refreshToken", payload.refreshToken);
-      })
-      .addCase(registerRequest.rejected, (state, { payload }) => {
-        state.error = payload;
-        state.loading = false;
-      })
+  extraReducers: {
+    // Обработка регистрации
+    [userRegister.pending]: (state) => {
+      state.loading = true;
+    },
+    [userRegister.fulfilled]: (state, { payload }) => {
+      state.userInfo = payload.user;
+      state.isAuthChecked = true;
+      state.isUserLogged = true;
+      state.loading = false;
+      state.userMessage = SUCC_REGISTRATION;
+      state.devError = null;
+      setCookie(ACCESS_TOKEN_NAME, payload.accessToken);
+      setCookie(REFRESH_TOKEN_NAME, payload.refreshToken);
+    },
+    [userRegister.rejected]: (state, { payload }) => {
+      state.loading = false;
+      state.userMessage = ERR_USER_REGISTRATION;
+      state.devError = payload;
+    },
 
-      // login
-      .addCase(loginRequest.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(loginRequest.fulfilled, (state, { payload }) => {
-        state.isAccessTokenValid = true;
-        state.isAuthChecked = true;
-        state.isUserLogged = true;
-        state.loading = false;
-        state.userInfo = payload.user;
-        setCookie("accessToken", payload.accessToken);
-        setCookie("refreshToken", payload.refreshToken);
-      })
-      .addCase(loginRequest.rejected, (state, { payload }) => {
-        state.error = payload;
-        state.loading = false;
-      })
+    // Обработка логина
+    [userLogin.pending]: (state) => {
+      state.loading = true;
+    },
+    [userLogin.fulfilled]: (state, { payload }) => {
+      console.log("fulfilled");
+      state.userInfo = payload.user;
+      state.isAuthChecked = true;
+      state.isUserLogged = true;
+      state.loading = false;
+      state.userMessage = SUCC_LOGIN;
+      state.devError = null;
+      setCookie(ACCESS_TOKEN_NAME, payload.accessToken);
+      setCookie(REFRESH_TOKEN_NAME, payload.refreshToken);
+    },
+    [userLogin.rejected]: (state, { payload }) => {
+      state.loading = false;
+      state.userMessage = ERR_USER_LOGIN;
+      state.devError = payload;
+    },
 
-      // logout
-      .addCase(logoutRequest.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(logoutRequest.fulfilled, (state, { payload }) => {
-        state.isAccessTokenValid = false;
-        state.isAuthChecked = false;
-        state.isUserLogged = false;
-        state.loading = false;
-        state.userInfo = null;
-        state.error = null;
-        console.log("logout suc");
-        deleteCookie("accessToken");
-        deleteCookie("refreshToken");
-      })
-      .addCase(logoutRequest.rejected, (state, { payload }) => {
-        state.error = payload;
-        state.loading = false;
-      })
+    // Изменение данных юзера
+    [changeUserData.pending]: (state) => {
+      state.loading = true;
+    },
+    [changeUserData.fulfilled]: (state, { payload }) => {
+      state.userInfo = payload.user;
+      state.loading = false;
+      state.userMessage = SUCC_USER_DATA_UPDATE;
+      state.devError = null;
+    },
+    [changeUserData.rejected]: (state, { payload }) => {
+      state.loading = false;
+      state.devError = payload;
+      state.userMessage = ERR_USER_DATA_ISNT_UPDATED;
+    },
 
-      // new token
-      .addCase(getNewAccessToken.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(getNewAccessToken.fulfilled, (state, { payload }) => {
-        state.isAccessTokenValid = true;
-        state.loading = false;
-        deleteCookie("refreshToken");
-        deleteCookie("accessToken")
-        setCookie("accessToken", payload.accessToken);
-        setCookie("refreshToken", payload.refreshToken);
-      })
-      .addCase(getNewAccessToken.rejected, (state, { payload }) => {
-        state.error = payload;
-        state.loading = false;
-      })
+    // Логаут
+    [userLogout.pending]: (state) => {
+      state.loading = true;
+    },
+    [userLogout.fulfilled]: (state) => {
+      state.userInfo = null;
+      state.isAuthChecked = true; // #
+      state.isUserLogged = false;
+      state.loading = false;
+      state.userMessage = SUCC_USER_LOGOUT;
+      state.devError = null;
+      deleteCookie(ACCESS_TOKEN_NAME);
+      deleteCookie(REFRESH_TOKEN_NAME);
+    },
+    [userLogout.rejected]: (state, { payload }) => {
+      state.loading = false;
+      state.devError = payload;
+      state.userMessage = ERR_USER_LOGOUT;
+    },
 
-      // check user auth
-      .addCase(checkUserAuth.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(checkUserAuth.fulfilled, (state, { payload }) => {
-        state.userInfo = payload.user;
-        state.isUserLogged = true;
-        state.loading = false;
-        state.isAuthChecked = true;
-      })
-      .addCase(checkUserAuth.rejected, (state, { payload }) => {
-        state.error = payload;
-        state.loading = false;
-        state.isAuthChecked = true;
-      })
+    // Новые токены
+    [getNewAccessToken.pending]: (state) => {
+      state.loading = true;
+    },
+    [getNewAccessToken.fulfilled]: (state, { payload }) => {
+      state.loading = false;
+      state.userMessage = null;
+      state.devError = null;
+      deleteCookie(ACCESS_TOKEN_NAME);
+      deleteCookie(REFRESH_TOKEN_NAME);
+      setCookie(ACCESS_TOKEN_NAME, payload.accessToken);
+      setCookie(REFRESH_TOKEN_NAME, payload.refreshToken);
+    },
+    [getNewAccessToken.rejected]: (state) => {
+      state.loading = false;
+      state.devError = ERR_SERVER;
+      state.userMessage = ERR_SERVER;
+    },
 
-      // change user data
-      .addCase(changeUserData.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(changeUserData.fulfilled, (state, { payload }) => {
-        console.log("norm, novie dannie ", payload.user);
-        state.userInfo = payload.user;
-        state.loading = false;
-      })
-      .addCase(changeUserData.rejected, (state, { payload }) => {
-        console.log("oshibka ", payload);
-        state.error = payload;
-        state.loading = false;
-      });
+    // Проверка auth
+    [checkUserAuth.pending]: (state) => {
+      state.loading = true;
+    },
+    [checkUserAuth.fulfilled]: (state, { payload }) => {
+      state.userInfo = payload.user;
+      state.isAuthChecked = true;
+      state.isUserLogged = true;
+      state.loading = false;
+      state.userMessage = null;
+      state.devError = null;
+    },
+    [checkUserAuth.rejected]: (state, { payload }) => {
+      state.isAuthChecked = true;
+      state.loading = false;
+      state.devError = payload;
+      state.userError = null;
+      state.devError = ERR_ACCESS_TOKEN_UNDEFINED;
+    },
   },
 });
-
-export const registerRequest = createAsyncThunk(
-  "auth/register",
-  async ({ name, email, password }, { rejectWithValue }) => {
-    try {
-      const { data } = await axios.post(`${BASE_URL}/auth/register`, {
-        email: email,
-        password: password,
-        name: name,
-      });
-      return data;
-    } catch (error) {
-      if (error.response && error.response.data.message) {
-        return rejectWithValue(error.response.data.message);
-      } else {
-        return rejectWithValue(error.message);
-      }
-    }
-  }
-);
-
-export const loginRequest = createAsyncThunk(
-  "auth/login",
-  async ({ email, password }, thunkAPI) => {
-    try {
-      const { data } = await axios.post(`${BASE_URL}/auth/login`, {
-        email: email,
-        password: password,
-      });
-      return data;
-    } catch (error) {
-      if (error.response && error.response.data.message) {
-        return thunkAPI.rejectWithValue(error.response.data.message);
-      } else {
-        return thunkAPI.rejectWithValue(error.message);
-      }
-    }
-  }
-);
-
-export const logoutRequest = createAsyncThunk(
-  "auth/logout",
-  async ({ token }, thunkAPI) => {
-    console.log("sent req for logout", token);
-    try {
-      const { data } = await axios.post(`${BASE_URL}/auth/logout`, {
-        token,
-      });
-      return data;
-    } catch (error) {
-      console.log("logout err");
-
-      if (error.response && error.response.data.message) {
-        return thunkAPI.rejectWithValue(error.response.data.message);
-      } else {
-        return thunkAPI.rejectWithValue(error.message);
-      }
-    }
-  }
-);
-
-export const changeUserData = createAsyncThunk(
-  "auth/changeUserData",
-  async ({ token, email, name, password }, { rejectWithValue }) => {
-    try {
-      console.log(token, email, name, password);
-      const { data } = await axios.patch(
-        `${BASE_URL}/auth/user`,
-        {
-          email,
-          name,
-          password,
-        },
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-
-      return data;
-    } catch (error) {
-      if (error.response && error.response.data.message) {
-        return rejectWithValue(error.response.data.message);
-      } else {
-        return rejectWithValue(error.message);
-      }
-    }
-  }
-);
-
-export const getNewAccessToken = createAsyncThunk(
-  "auth/getNewAccessToken",
-  async (_, thunkAPI) => {
-    const refreshToken = getCookie("refreshToken");
-    try {
-      const { data } = await axios.post(`${BASE_URL}/auth/token`, {
-        token: refreshToken,
-      });
-      return data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue("rejected аксес токен не обновлен");
-    }
-  }
-);
-
-// надо переделать access в куки, тогда мб лучше будет
-export const checkUserAuth = createAsyncThunk(
-  "auth/checkUserAuth",
-  async (_, thunkAPI) => {
-    const accessToken = getCookie("accessToken");
-    console.log(accessToken)
-    if (accessToken) {
-      try {
-        const { data } = await axios.get(`${BASE_URL}/auth/user`, {
-          headers: {
-            "Content-type": "application/json",
-            Authorization: accessToken,
-          },
-        });
-        return data;
-      } catch (error) {
-        if (error.response.data.message === "jwt expired") {
-          thunkAPI.isAccessTokenValid = false;
-        }
-        return thunkAPI.rejectWithValue(error.response.data.message);
-      } 
-    } else {
-      console.log("аксеса нет, надо взять аксес");
-      return thunkAPI.rejectWithValue("rejected аксес токен не найден");
-    }
-  }
-);
-
-
-// export const authRequest = (accessToken) => {
-//   return axios.get(`${BASE_URL}/auth/user`, {
-//     headers: {
-//       "Content-type": "application/json",
-//       Authorization: accessToken,
-//     },
-//   }).then((response) => {
-//     if(response.data.accessToken) {
-      
-//     }
-//   });
-// };
-
-
 
 export const {
   storeRefreshToken,

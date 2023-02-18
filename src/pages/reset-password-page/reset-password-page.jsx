@@ -1,4 +1,5 @@
 import {
+  Button,
   Input,
   PasswordInput,
 } from "@ya.praktikum/react-developer-burger-ui-components";
@@ -25,7 +26,7 @@ const ResetPasswordPage = () => {
   const navigate = useNavigate();
   useEffect(() => {
     if (changeSuccess) {
-      navigate("/")
+      navigate("/");
     } else {
     }
   }, [changeSuccess]);
@@ -33,7 +34,7 @@ const ResetPasswordPage = () => {
   return (
     <div className={resetPasswrodStyles.mainBlock}>
       <div className={resetPasswrodStyles.upperBlock}>
-        <p className="text text_type_main-medium">Задайте новый пароль</p>
+        <p className="text text_type_main-medium">Восстановление пароля</p>
         <PasswordInput
           onChange={(e) => setNewPassword(e.target.value)}
           value={newPassword}
@@ -50,8 +51,14 @@ const ResetPasswordPage = () => {
           size={"default"}
           extraClass="ml-1"
         />
-
-        <button onClick={handleResetPassword}>Сохранить</button>
+        <Button
+          onClick={() => handleResetPassword()}
+          htmlType="button"
+          type="primary"
+          size="large"
+        >
+          Восстановить
+        </Button>
       </div>
     </div>
   );

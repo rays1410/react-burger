@@ -23,7 +23,7 @@ export default function ProtectedRoute({ onlyUnAuth = false, redirectTo, childre
 
   if (onlyUnAuth && userInfo) {
     console.log("уже авторизован, редирект на гл страницу");
-    return <Navigate to={'/'} state={{ from: location }} />;
+    return <Navigate to={'/profile'} state={{ from: location }} />;
   }
 
   if (!onlyUnAuth && !userInfo) {

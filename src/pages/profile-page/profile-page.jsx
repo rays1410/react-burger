@@ -1,8 +1,9 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAppSelector } from "../..";
-import styles from "./profile.module.css";
+import profileStyles from "./profile.module.css";
 import { useState } from "react";
 import {
+  Button,
   EmailInput,
   Input,
   PasswordInput,
@@ -11,25 +12,32 @@ import { useDispatch } from "react-redux";
 import {
   userDelete,
   changeUserData,
-  logoutRequest,
+  userLogout,
 } from "../../services/authSlice";
 
 const ProfilePage = () => {
-  const activeClassName = `${styles.disabledLink} text text_type_main-medium`;
+  const activeClassName = `${profileStyles.disabledLink} text text_type_main-medium`;
+
   const disabledClassName = `text text_type_main-medium`;
-  const { userInfo, userAccessToken, userRefreshToken, loading } =
-    useAppSelector((state) => state.authSlice);
+  const { userInfo, userMessage, loading } = useAppSelector(
+    (state) => state.authSlice
+  );
 
   const [name, setName] = useState(userInfo.name);
   const [email, setEmail] = useState(userInfo.email);
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const isDataChanged =
     name !== userInfo.name || email !== userInfo.email || password.length !== 0;
 
+  const activeButtonClass = isDataChanged
+    ? profileStyles.profileButton
+    : profileStyles.hiddenButtons;
+
   const saveHandler = () => {
-    dispatch(changeUserData({ token: userAccessToken, email, name, password }));
+    dispatch(changeUserData({ email, name, password })).unwrap();
   };
 
   const cancelHandler = () => {
@@ -40,77 +48,106 @@ const ProfilePage = () => {
 
   const handleLogout = async (e) => {
     e.preventDefault();
-    console.log("kek");
-    dispatch(logoutRequest({ token: userRefreshToken }));
+    dispatch(userLogout())
+      .unwrap()
+      .then(() => navigate("/"));
   };
 
   return loading ? (
     <div>{"Loading"}</div>
   ) : (
-    <div className={styles.mainBlock}>
-      <div className={styles.leftBlock}>
-        <NavLink
-          to="/profile"
-          className={({ isActive }) =>
-            isActive ? activeClassName : disabledClassName
-          }
-        >
-          Профиль
-        </NavLink>
-        <NavLink
-          to="orders"
-          className={({ isActive }) =>
-            isActive ? activeClassName : disabledClassName
-          }
-        >
-          История заказов
-        </NavLink>
-        <NavLink
-          className={({ isActive }) =>
-            isActive ? activeClassName : disabledClassName
-          }
-          onClick={(e) => {
-            handleLogout(e);
-          }}
-        >
-          Выход
-        </NavLink>
-      </div>
-      <div className={styles.rightBlock}>
-        <Input
-          type={"text"}
-          placeholder={"Имя "}
-          onChange={(e) => setName(e.target.value)}
-          value={name}
-          name={"name"}
-          size={"default"}
-          extraClass="ml-1"
-        />
-        <EmailInput
-          type={"text"}
-          placeholder={"Логин"}
-          onChange={(e) => setEmail(e.target.value)}
-          value={email}
-          name={"login"}
-          size={"default"}
-          extraClass="ml-1"
-        />
-        <PasswordInput
-          type={"password"}
-          placeholder={"Пароль"}
-          onChange={(e) => setPassword(e.target.value)}
-          value={password}
-          name={"password"}
-          size={"default"}
-          extraClass="ml-1"
-        />
+    <div className={profileStyles.mainBlock}>
+      <div className={profileStyles.content}>
+        <div className={profileStyles.leftBlock}>
+          <nav className={profileStyles.navMenu}>
+            <NavLink
+              to="/profile"
+              className={({ isActive }) =>
+                isActive ? activeClassName : disabledClassName
+              }
+              end
+            >
+              Профиль
+            </NavLink>
+            <NavLink
+              to="orders"
+              className={({ isActive }) =>
+                isActive ? activeClassName : disabledClassName
+              }
+              end
+            >
+              История заказов
+            </NavLink>
+            <NavLink
+              className={({ isActive }) =>
+                isActive ? activeClassName : disabledClassName
+              }
+              onClick={(e) => {
+                handleLogout(e);
+              }}
+              to={'/'}
+              end
+            >
+              Выход
+            </NavLink>
+          </nav>
+          <p className={"text text_type_main-default text_color_inactive"}>
+            В этом разделе вы можете изменить свои персональные данные
+          </p>
+        </div>
+        <div className={profileStyles.rightBlock}>
+          <Input
+            type={"text"}
+            placeholder={"Имя "}
+            onChange={(e) => setName(e.target.value)}
+            value={name}
+            name={"name"}
+            size={"default"}
+            extraClass="ml-1"
+          />
+          <EmailInput
+            type={"text"}
+            placeholder={"Логин"}
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
+            name={"login"}
+            size={"default"}
+            extraClass="ml-1"
+          />
+          <PasswordInput
+            type={"password"}
+            placeholder={"Пароль"}
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
+            name={"password"}
+            size={"default"}
+            extraClass="ml-1"
+          />
 
-        {isDataChanged ? (
-          <>
-            <button onClick={saveHandler}>Сохранить</button>
-            <button onClick={cancelHandler}>Отмена</button>
-          </>
-        ) : null}
+          <div className={profileStyles.buttons}>
+            <Button
+              onClick={saveHandler}
+              extraClass={activeButtonClass}
+              htmlType="button"
+              type="primary"
+              size="large"
+            >
+              Сохранить
+            </Button>
+            <Button
+              onClick={cancelHandler}
+              extraClass={activeButtonClass}
+              htmlType="button"
+              type="primary"
+              size="large"
+            >
+              Отмена
+            </Button>
+          </div>
+          <p className={"text text_type_main-default text_color_inactive"}>
+            {userMessage ? userMessage : "kek"}
+          </p>
+        </div>
       </div>
     </div>
   );
