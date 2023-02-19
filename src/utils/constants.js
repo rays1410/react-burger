@@ -1,8 +1,8 @@
 export const ESC_BUTTON = "Escape";
 
-
 export const REFRESH_TOKEN_NAME = "refreshToken";
 export const ACCESS_TOKEN_NAME = "accessToken";
+export const ACCESS_TOKEN_TTL = 1200; // 20 min
 
 export const BASE_URL = "https://norma.nomoreparties.space/api";
 

@@ -4,13 +4,11 @@ import styles from "./ingredient-page.module.css";
 import { nutrientsNameMapping } from "../../utils/constants";
 import { IngredientObject } from "../../utils/interfaces";
 import { PATH_ERR } from "../../utils/pageNames";
+import { getIngredientsSlice } from "../../utils/utils";
 
 const IngredientPage = () => {
   const { id } = useParams();
-
-  const ingredientsData = useAppSelector(
-    (state) => state.ingredients.ingredientsData
-  );
+  const { ingredientsData } = useAppSelector(getIngredientsSlice);
   const ingredient = ingredientsData.find((item) => item._id === id);
 
   return ingredient ? (

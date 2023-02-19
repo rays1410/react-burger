@@ -1,5 +1,6 @@
 import { BASE_URL } from "./constants";
 import axios from "axios";
+import { getCookie } from "./cookieUtils";
 
 export const userRegisterRequest = (name, email, password) => {
   return axios.post(`${BASE_URL}/auth/register`, {
@@ -52,4 +53,8 @@ export const checkAuthRequest = (accessToken) => {
       Authorization: accessToken,
     },
   });
+};
+
+export const tokenExists = (tokenName) => {
+  return getCookie(tokenName) ? true : false;
 };

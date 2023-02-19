@@ -4,6 +4,7 @@ import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components
 import React from "react";
 import { useAppSelector } from "../..";
 import { useDrag } from "react-dnd";
+import { getBurgerSlice } from "../../utils/utils";
 
 // This component represents cards of ingredients that
 // we see in the left part of application
@@ -21,9 +22,7 @@ const IngredientCard = React.memo(
       []
     );
 
-    const { currentIngredients, currentBun } = useAppSelector(
-      (state) => state.burgerConstructor
-    );
+    const { currentIngredients, currentBun } = useAppSelector(getBurgerSlice);
 
     // Если текущий ингредиент === текущей булке, то
     // я показываю галочку на выбранной булке.

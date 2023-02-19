@@ -12,15 +12,15 @@ import { userRegister } from "../../services/authSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch, useAppSelector } from "../..";
 import { PATH_LOGIN, PATH_PROFILE } from "../../utils/pageNames";
+import Loader from "../../components/loader/loader";
+import { getAuthSlice } from "../../utils/utils";
 
 const RegisterPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { isUserLogged, userMessage } = useAppSelector(
-    (state) => state.authSlice
-  );
+  const { isUserLogged, userMessage, loading } = useAppSelector(getAuthSlice);
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -31,14 +31,20 @@ const RegisterPage = () => {
     }
   }, [navigate, isUserLogged]);
 
-  const handleRegistration = () => {
+  const handleRegistration = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     dispatch(userRegister({ email, password, name }));
   };
 
-  return (
+  return loading ? (
+    <Loader />
+  ) : (
     <>
       <div className={registerStyles.mainBlock}>
-        <div className={registerStyles.upperBlock}>
+        <form
+          onSubmit={(e) => handleRegistration(e)}
+          className={registerStyles.upperBlock}
+        >
           <p className="text text_type_main-medium">Регистрация</p>
           <Input
             type={"text"}
@@ -63,15 +69,10 @@ const RegisterPage = () => {
             name={"password"}
             extraClass="mb-2"
           />
-          <Button
-            onClick={handleRegistration}
-            htmlType="button"
-            type="primary"
-            size="large"
-          >
+          <Button htmlType="submit" type="primary" size="large">
             Зарегистрироваться
           </Button>
-        </div>
+        </form>
         <div className={registerStyles.lowerBlock}>
           <span className="text text_type_main-default">
             <p className="text_color_inactive">

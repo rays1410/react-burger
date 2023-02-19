@@ -1,9 +1,8 @@
-import { useEffect, useCallback } from "react";
-import { useDispatch } from "react-redux";
-import { useLocation, Navigate, useNavigate } from "react-router-dom";
+import { useLocation, Navigate} from "react-router-dom";
 import { useAppSelector } from "../..";
-import { getCookie } from "../../utils/cookieUtils";
 import { ProtectedRouteTypes } from "../../utils/interfaces";
+import { PATH_PROFILE } from "../../utils/pageNames";
+import { getAuthSlice } from "../../utils/utils";
 
 export default function ProtectedRoute({
   onlyUnAuth = false,
@@ -12,16 +11,14 @@ export default function ProtectedRoute({
 }: ProtectedRouteTypes) {
   const location = useLocation();
 
-  const { isAuthChecked, isUserData } = useAppSelector(
-    (state) => state.authSlice
-  );
+  const { isAuthChecked, isUserData } = useAppSelector(getAuthSlice);
 
   if (!isAuthChecked) {
     return <div>Loading...</div>;
   }
 
   if (onlyUnAuth && isUserData) {
-    return <Navigate to={"/profile"} state={{ from: location }} />;
+    return <Navigate to={PATH_PROFILE} state={{ from: location }} />;
   }
 
   if (!onlyUnAuth && !isUserData) {

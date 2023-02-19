@@ -5,36 +5,52 @@ import {
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AppDispatch, useAppSelector } from "../..";
-import { clearUserMessage } from "../../services/authSlice";
+import Loader from "../../components/loader/loader";
 import { resetPassword } from "../../services/resetPasswordSlice";
-import { BASE_URL } from "../../utils/constants";
-import { PATH_LOGIN } from "../../utils/pageNames";
+import { PATH_FORGOT_PASSWORD, PATH_LOGIN } from "../../utils/pageNames";
+import { getResetPasswordSlice } from "../../utils/utils";
 
-import resetPasswrodStyles from "./reset-password.module.css";
+import resetPasswordStyles from "./reset-password.module.css";
 const ResetPasswordPage = () => {
   const [newPassword, setNewPassword] = useState("");
   const [emailToken, setEmailToken] = useState("");
+  const { state } = useLocation();
+
+  console.log();
 
   const dispatch = useDispatch<AppDispatch>();
-  const { changeSuccess, userMessage } = useAppSelector(
-    (store) => store.resetPasswordSlice
+  const { changeSuccess, userMessage, loading } = useAppSelector(
+    getResetPasswordSlice
   );
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (state?.from) {
+      if (state.from !== PATH_FORGOT_PASSWORD) navigate(PATH_FORGOT_PASSWORD);
+    } else {
+      navigate(PATH_FORGOT_PASSWORD);
+    }
+
     if (changeSuccess) {
       navigate(PATH_LOGIN);
     }
-  }, [changeSuccess]);
+  }, [navigate, state, changeSuccess]);
 
-  const handleResetPassword = () =>
+  const handleResetPassword = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     dispatch(resetPassword({ newPassword, emailToken }));
+  };
 
-  return (
-    <div className={resetPasswrodStyles.mainBlock}>
-      <div className={resetPasswrodStyles.upperBlock}>
+  return loading ? (
+    <Loader />
+  ) : (
+    <div className={resetPasswordStyles.mainBlock}>
+      <form
+        onSubmit={(e) => handleResetPassword(e)}
+        className={resetPasswordStyles.upperBlock}
+      >
         <p className="text text_type_main-medium">Восстановление пароля</p>
         <PasswordInput
           onChange={(e) => setNewPassword(e.target.value)}
@@ -52,15 +68,10 @@ const ResetPasswordPage = () => {
           size={"default"}
           extraClass="ml-1"
         />
-        <Button
-          onClick={() => handleResetPassword()}
-          htmlType="button"
-          type="primary"
-          size="large"
-        >
+        <Button htmlType="submit" type="primary" size="large">
           Восстановить
         </Button>
-      </div>
+      </form>
       <p className={"text text_type_main-default text_color_inactive"}>
         {userMessage ? userMessage : null}
       </p>

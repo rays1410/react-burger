@@ -14,13 +14,13 @@ import {
   PATH_PROFILE,
   PATH_REGISTER,
 } from "../../utils/pageNames";
+import Loader from "../../components/loader/loader";
+import { getAuthSlice } from "../../utils/utils";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const { userMessage, isUserLogged } = useAppSelector(
-    (state) => state.authSlice
-  );
+  const [email, setEmail] = useState("dreyz@yandex.ru");
+  const [password, setPassword] = useState("password");
+  const { userMessage, isUserLogged, loading } = useAppSelector(getAuthSlice);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
@@ -30,14 +30,17 @@ const LoginPage = () => {
     }
   }, [navigate, isUserLogged]);
 
-  const handleLogin = () => {
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     dispatch(clearUserMessage());
     dispatch(userLogin({ email, password }));
   };
 
-  return (
+  return loading ? (
+    <Loader />
+  ) : (
     <div className={loginStyles.mainBlock}>
-      <div className={loginStyles.upperBlock}>
+      <form onSubmit={(e) => handleLogin(e)} className={loginStyles.upperBlock}>
         <p className="text text_type_main-medium">Вход</p>
         <EmailInput
           onChange={(e) => setEmail(e.target.value)}
@@ -52,15 +55,10 @@ const LoginPage = () => {
           name={"password"}
           extraClass="mb-2"
         />
-        <Button
-          onClick={handleLogin}
-          htmlType="button"
-          type="primary"
-          size="large"
-        >
+        <Button htmlType="submit" type="primary" size="large">
           Войти
         </Button>
-      </div>
+      </form>
 
       <div className={loginStyles.lowerBlock}>
         <span>

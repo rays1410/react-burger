@@ -20,13 +20,18 @@ import { useDrop } from "react-dnd/dist/hooks";
 import { IngredientObject } from "../../utils/interfaces";
 import { sendOrderRequest } from "../../services/constructorSlice";
 import Modal from "../modal/modal";
+import { useNavigate } from "react-router-dom";
+import { PATH_LOGIN } from "../../utils/pageNames";
+import { getAuthSlice, getBurgerSlice } from "../../utils/utils";
 
 const BurgerConstructor = () => {
   // Достаем текущее состояние конструктора
-  const { currentIngredients, currentBun, totalPrice } = useAppSelector(
-    (state) => state.burgerConstructor
-  );
+  const { currentIngredients, currentBun, totalPrice } =
+    useAppSelector(getBurgerSlice);
+  const { isUserLogged } = useAppSelector(getAuthSlice);
+  
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   // Хук дропа карточек в конструктор
   const [, dropTarget] = useDrop({
@@ -55,13 +60,16 @@ const BurgerConstructor = () => {
   const handleCloseModal = () => {
     setModalVisible(false);
     dispatch(reset());
-  }
+  };
 
   // Хук-переключалка для модалки
   const [modalVisible, setModalVisible] = useToggle(false);
 
   // Обработчик кнопки "Оформить заказ"
   const sendOrderHandler = () => {
+    if (!isUserLogged) {
+      navigate(PATH_LOGIN);
+    }
 
     // Показываем модальное окно
     setModalVisible(true);

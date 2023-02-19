@@ -9,17 +9,25 @@ import {
   PasswordInput,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import { useDispatch } from "react-redux";
-import { changeUserData, userLogout } from "../../services/authSlice";
-import { PATH_ADD_ORDERS, PATH_PROFILE } from "../../utils/pageNames";
+import {
+  changeUserData,
+  clearUser,
+  getNewAccessToken,
+  userLogout,
+} from "../../services/authSlice";
+import {
+  PATH_ADD_ORDERS,
+  PATH_HOME,
+  PATH_PROFILE,
+} from "../../utils/pageNames";
 import { useEffect } from "react";
+import { getAuthSlice } from "../../utils/utils";
 
 const ProfilePage = () => {
   const activeClassName = `${profileStyles.disabledLink} text text_type_main-medium`;
 
   const disabledClassName = `text text_type_main-medium`;
-  const { userInfo, userMessage, isUserLogged } = useAppSelector(
-    (state) => state.authSlice
-  );
+  const { userInfo, userMessage, isUserLogged } = useAppSelector(getAuthSlice);
 
   const [name, setName] = useState(userInfo.name);
   const [email, setEmail] = useState(userInfo.email);
@@ -35,7 +43,14 @@ const ProfilePage = () => {
     : profileStyles.hiddenButtons;
 
   const saveHandler = () => {
-    dispatch(changeUserData({ email, name, password })).unwrap();
+    dispatch(changeUserData({ email, name, password }))
+      .unwrap()
+      .catch(() => {
+        dispatch(getNewAccessToken())
+          .unwrap()
+          .then(() => dispatch(changeUserData({ email, name, password })))
+          .catch(() => dispatch(clearUser()));
+      });
   };
 
   const cancelHandler = () => {
@@ -51,7 +66,11 @@ const ProfilePage = () => {
   }, [navigate, isUserLogged]);
 
   const handleLogout = () => {
-    dispatch(userLogout());
+    dispatch(userLogout())
+      .unwrap()
+      .catch(() => {
+        dispatch(clearUser());
+      });
   };
 
   return (
@@ -82,7 +101,7 @@ const ProfilePage = () => {
                 isActive ? activeClassName : disabledClassName
               }
               onClick={handleLogout}
-              to={"/"}
+              to={PATH_HOME}
               end
             >
               Выход

@@ -1,7 +1,4 @@
-import {
-  createSlice,
-  createAsyncThunk,
-} from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import {
   ERR_ACCESS_TOKEN_ISNT_UPDATED,
@@ -21,11 +18,16 @@ import {
   accessTokenRequest,
   changeUserDataRequest,
   checkAuthRequest,
+  tokenExists,
   userLoginRequest,
   userLogoutRequest,
   userRegisterRequest,
 } from "../utils/authUtils";
-import { ACCESS_TOKEN_NAME, REFRESH_TOKEN_NAME } from "../utils/constants";
+import {
+  ACCESS_TOKEN_NAME,
+  ACCESS_TOKEN_TTL,
+  REFRESH_TOKEN_NAME,
+} from "../utils/constants";
 
 export const userRegister = createAsyncThunk(
   "auth/register",
@@ -68,12 +70,12 @@ export const userLogout = createAsyncThunk(
     const refreshToken = getCookie(REFRESH_TOKEN_NAME);
     try {
       const { data } = await userLogoutRequest(refreshToken);
-
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(ERR_USER_LOGOUT);
     }
-  }
+  },
+  { condition: () => tokenExists(REFRESH_TOKEN_NAME) }
 );
 
 export const changeUserData = createAsyncThunk(
@@ -98,6 +100,9 @@ export const changeUserData = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(ERR_USER_DATA_ISNT_UPDATED);
     }
+  },
+  {
+    condition: () => tokenExists(ACCESS_TOKEN_NAME),
   }
 );
 
@@ -113,12 +118,7 @@ export const getNewAccessToken = createAsyncThunk(
     }
   },
   {
-    condition: () => {
-      const refreshToken = getCookie(REFRESH_TOKEN_NAME);
-      if (!refreshToken) {
-        return false; // нет рефреш токена, значит не идем за акссесом
-      }
-    },
+    condition: () => tokenExists(REFRESH_TOKEN_NAME),
   }
 );
 
@@ -171,6 +171,15 @@ const authSlice = createSlice({
     clearUserMessage: (state: StateType) => {
       state.userMessage = null;
     },
+    clearUser: (state: StateType) => {
+      state.isAuthChecked = false;
+      state.isUserLogged = false;
+      state.isUserData = false;
+      state.loading = false;
+      state.userInfo = {} as UserInfoObject;
+      state.userMessage = null;
+      state.devError = null;
+    },
   },
 
   extraReducers: {
@@ -208,7 +217,9 @@ const authSlice = createSlice({
       state.loading = false;
       state.userMessage = SUCC_LOGIN;
       state.devError = null;
-      setCookie(ACCESS_TOKEN_NAME, payload.accessToken);
+      setCookie(ACCESS_TOKEN_NAME, payload.accessToken, {
+        expires: ACCESS_TOKEN_TTL,
+      });
       setCookie(REFRESH_TOKEN_NAME, payload.refreshToken);
     },
     [userLogin.rejected.type]: (state: StateType, { payload }) => {
@@ -268,7 +279,9 @@ const authSlice = createSlice({
       state.devError = null;
       deleteCookie(ACCESS_TOKEN_NAME);
       deleteCookie(REFRESH_TOKEN_NAME);
-      setCookie(ACCESS_TOKEN_NAME, payload.accessToken);
+      setCookie(ACCESS_TOKEN_NAME, payload.accessToken, {
+        expires: ACCESS_TOKEN_TTL,
+      });
       setCookie(REFRESH_TOKEN_NAME, payload.refreshToken);
     },
     [getNewAccessToken.rejected.type]: (state: StateType) => {
@@ -301,6 +314,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearUserMessage } = authSlice.actions;
+export const { clearUserMessage, clearUser } = authSlice.actions;
 
 export default authSlice.reducer;
