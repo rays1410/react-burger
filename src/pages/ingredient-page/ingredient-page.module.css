@@ -1,0 +1,23 @@
+.mainBlock {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  width: 640px;
+
+  position: absolute;
+  width: 640px;
+  height: 575px;
+  margin-left: auto;
+  margin-right: auto;
+  top: 208px;
+  left: 0;
+  right: 0;
+}
+
+.bottomTable {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 32px;
+  margin-bottom: 60px;
+}

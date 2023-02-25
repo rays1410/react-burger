@@ -6,6 +6,8 @@ import {
   ListIcon,
   ProfileIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
+import { Link } from "react-router-dom";
+import { PATH_HOME, PATH_PROFILE } from "../../utils/pageNames";
 
 const AppHeader = () => {
   return (
@@ -13,23 +15,23 @@ const AppHeader = () => {
       <div className={headerStyles.headerContent}>
         <div className={headerStyles.headerLeft}>
           <div className={headerStyles.headerItem}>
-            <a
-              href="/"
+            <Link
+              to={PATH_HOME}
               className={`${headerStyles.headerLink} text text_type_main-default`}
             >
               <BurgerIcon type="primary" />
               Конструктор
-            </a>
+            </Link>
           </div>
 
           <div className={headerStyles.headerItem}>
-            <a
-              href="/"
+            <Link
+              to={PATH_HOME}
               className={`${headerStyles.headerLink} ${headerStyles.disabled} text text_type_main-default text_color_inactive`}
             >
               <ListIcon type="secondary" />
               Лента заказов
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -39,13 +41,13 @@ const AppHeader = () => {
 
         <div className={headerStyles.headerRight}>
           <div className={headerStyles.headerItem}>
-            <a
-              href="/"
-              className={`${headerStyles.headerLink} ${headerStyles.disabled} text text_type_main-default text_color_inactive`}
+            <Link
+              to={PATH_PROFILE}
+              className={`${headerStyles.headerLink} text text_type_main-default text_color_active`}
             >
               <ProfileIcon type="secondary" />
               Личный кабинет
-            </a>
+            </Link>
           </div>
         </div>
       </div>

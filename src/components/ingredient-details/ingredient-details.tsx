@@ -2,13 +2,14 @@ import ingredientDetailsStyles from "./ingredient-details.module.css";
 import { nutrientsNameMapping } from "../../utils/constants";
 import { IngredientObject } from "../../utils/interfaces";
 import { useAppSelector } from "../..";
+import { getIngredientsSlice } from "../../utils/utils";
+import Loader from "../loader/loader";
+import { useParams } from "react-router-dom";
 
 const IngredientDetails = () => {
-
-  // Вытаскиваем ингредиент, который будем показывать в модалке
-  const modalIngredient = useAppSelector(
-    (state) => state.ingredients.modalIngredient
-  );
+  const { id } = useParams();
+  const { ingredientsData } = useAppSelector(getIngredientsSlice);
+  const modalIngredient = ingredientsData.find((item) => item._id === id);
 
   return modalIngredient ? (
     <div className={ingredientDetailsStyles.modalContent}>
@@ -32,7 +33,7 @@ const IngredientDetails = () => {
       </div>
     </div>
   ) : (
-    <div>Ошибка</div>
+    <Loader />
   );
 };
 

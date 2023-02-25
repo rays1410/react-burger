@@ -34,7 +34,7 @@ export interface IngredientTypeTypes {
 export interface ModalTypes {
   children: React.ReactNode;
   header: string;
-  onClosed: any;
+  onClosedModal: any;
 }
 
 export interface ModalOverlayTypes {
@@ -42,3 +42,8 @@ export interface ModalOverlayTypes {
   onClosed: any;
 }
 
+export interface ProtectedRouteTypes {
+  onlyUnAuth: boolean;
+  redirectTo: string;
+  children: React.ReactNode;
+}

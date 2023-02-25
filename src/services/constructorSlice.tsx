@@ -6,7 +6,6 @@ import {
 } from "@reduxjs/toolkit";
 import { BASE_URL } from "../utils/constants";
 import { IngredientObject } from "../utils/interfaces";
-import axios from "axios";
 import { postOrder } from "../utils/utils";
 export interface ConstructorItem {
   id: string;
@@ -63,6 +62,7 @@ const constructorSlice = createSlice({
     // Устанавливаем булку
     setBun: (state, action) => {
       state.currentBun = action.payload;
+      state.modalStatus = "bun-there";
     },
 
     // Сортировка перетаскиванием ингредиентов
@@ -88,9 +88,13 @@ const constructorSlice = createSlice({
       state.modalStatus = action.payload;
     },
 
-    // Ресетим хранилищи после успешного получения номера заказа
+    // Ресетим хранилище после успешного получения номера заказа
     reset(state) {
-      Object.assign(state, initialState);
+      state.currentBun = {} as IngredientObject;
+      state.currentIngredients = [] as ConstructorItem[];
+      state.orderNumber = -1;
+      state.modalStatus = "no-bun-error";
+      state.error = null;
     },
   },
 
@@ -102,18 +106,16 @@ const constructorSlice = createSlice({
       })
       .addCase(sendOrderRequest.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.modalStatus = 'order-success'
+        state.modalStatus = "order-success";
         state.orderNumber = action.payload;
       })
       .addCase(sendOrderRequest.rejected, (state, action) => {
         state.error = action.error.message;
         state.status = "failed";
-        state.modalStatus = 'order-failed'
+        state.modalStatus = "order-failed";
       });
   },
 });
-
-
 
 export const sendOrderRequest = createAsyncThunk(
   "order/sendOrder",

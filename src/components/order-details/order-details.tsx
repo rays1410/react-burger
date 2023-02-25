@@ -2,11 +2,10 @@ import orderDetailsStyles from "./order-details.module.css";
 import doneIcon from "../../images/done.svg";
 import { useAppSelector } from "../..";
 import React from "react";
+import { getBurgerSlice } from "../../utils/utils";
 
 const OrderDetails = React.memo(() => {
-  const { modalStatus, orderNumber } = useAppSelector(
-    (state) => state.burgerConstructor
-  );
+  const { modalStatus, orderNumber } = useAppSelector(getBurgerSlice);
 
   const modalContent = (
     <>

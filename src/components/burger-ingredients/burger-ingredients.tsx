@@ -6,12 +6,9 @@ import ingredientStyles from "./burger-ingredients.module.css";
 import { IngredientObject } from "../../utils/interfaces";
 import { titlesEntries } from "../../utils/constants";
 import { useAppSelector } from "../..";
-import ModalOverlay from "../modal-overlay/modal-overlay";
 import { useDispatch } from "react-redux";
 import { setModalIngredient } from "../../services/ingredientSlice";
-import IngredientDetails from "../ingredient-details/ingredient-details";
-import useToggle from "../../hooks/useToggle";
-import Modal from "../modal/modal";
+import { getIngredientsSlice } from "../../utils/utils";
 
 // Find all entries of ingredient type
 // For example, if typeName is 'bun', function returns array of all buns
@@ -23,22 +20,18 @@ const BurgerIngredients = () => {
   const [currentTab, setCurrentTab] = useState("bun");
 
   // State for modal window
-  const [modalVisible, setModalVisible] = useToggle(false);
   const dispatch = useDispatch();
 
   const ingredientClickHandler = (ingredient: IngredientObject) => {
     dispatch(setModalIngredient(ingredient));
-    setModalVisible(!modalVisible);
   };
 
   // Получаем ингредиенты из хранилища
-  const ingredientsData = useAppSelector(
-    (state) => state.ingredients.ingredientsData
-  );
+  const { ingredientsData } = useAppSelector(getIngredientsSlice);
 
   // Мемоизируем ингредиенты
   const content = useMemo(() => {
-    return titlesEntries.map(([key, value]) => (
+    return titlesEntries.map(([key, value], indx) => (
       <IngredientType
         key={key}
         data={findButchItems(key, ingredientsData)}
@@ -93,12 +86,6 @@ const BurgerIngredients = () => {
       >
         {content}
       </Element>
-
-      {modalVisible && (
-        <Modal header={"Детали ингредиента"} onClosed={setModalVisible}>
-          <IngredientDetails />
-        </Modal>
-      )}
     </main>
   );
 };
