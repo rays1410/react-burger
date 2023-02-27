@@ -18,8 +18,8 @@ import Loader from "../../components/loader/loader";
 import { getAuthSlice } from "../../utils/utils";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("dreyz@yandex.ru");
-  const [password, setPassword] = useState("password");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const { userMessage, isUserLogged, loading } = useAppSelector(getAuthSlice);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();

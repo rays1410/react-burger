@@ -1,14 +1,14 @@
-import { useLocation, Navigate} from "react-router-dom";
+import { useLocation, Navigate } from "react-router-dom";
 import { useAppSelector } from "../..";
-import { ProtectedRouteTypes } from "../../utils/interfaces";
+import { IProtectedRoute } from "../../utils/interfaces";
 import { PATH_PROFILE } from "../../utils/pageNames";
 import { getAuthSlice } from "../../utils/utils";
 
-export default function ProtectedRoute({
+const ProtectedRoute: React.FC<IProtectedRoute> = ({
   onlyUnAuth = false,
   redirectTo,
   children,
-}: ProtectedRouteTypes) {
+}) => {
   const location = useLocation();
 
   const { isAuthChecked, isUserData } = useAppSelector(getAuthSlice);
@@ -26,4 +26,6 @@ export default function ProtectedRoute({
   }
 
   return <>{children}</>;
-}
+};
+
+export default ProtectedRoute;

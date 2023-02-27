@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom";
 import { CloseIcon } from "@ya.praktikum/react-developer-burger-ui-components";
-import { ModalTypes } from "../../utils/interfaces";
+import { IModal } from "../../utils/interfaces";
 import modalStyles from "./modal.module.css";
 import ModalOverlay from "../modal-overlay/modal-overlay";
 import { ESC_BUTTON } from "../../utils/constants";
@@ -8,7 +8,7 @@ import { useEffect } from "react";
 
 const modalRoot = document.getElementById("react-modals") as HTMLElement;
 
-const Modal = ({ children, header, onClosedModal }: ModalTypes) => {
+const Modal: React.FC<IModal> = ({ children, header, onClosedModal }) => {
 
   // Subscription on ESC button
   useEffect(() => {

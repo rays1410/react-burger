@@ -1,9 +1,4 @@
-import {
-  createSlice,
-  createAsyncThunk,
-  PayloadAction,
-  nanoid,
-} from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
   ERR_EMAIL_RESET,
   ERR_USER_RESET_PASSWORD,
@@ -14,6 +9,7 @@ import {
   forgotPasswordRequest,
   resetPasswordRequest,
 } from "../utils/resetPasswordUtils";
+import { IResetPassword } from "../utils/interfaces";
 
 export const forgotPassword = createAsyncThunk(
   "auth/forgotPassword",
@@ -42,14 +38,6 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
-interface StateType {
-  loading: boolean;
-  requestSuccess: boolean;
-  changeSuccess: boolean;
-  userMessage: null | string;
-  devError: null | string;
-}
-
 const initialState = {
   loading: false,
   requestSuccess: false,
@@ -64,15 +52,15 @@ const resetPasswordSlice = createSlice({
   reducers: {},
   extraReducers: {
     // Письмо для восстановления пароля
-    [forgotPassword.pending.type]: (state: StateType) => {
+    [forgotPassword.pending.type]: (state: IResetPassword) => {
       state.loading = true;
     },
-    [forgotPassword.fulfilled.type]: (state: StateType) => {
+    [forgotPassword.fulfilled.type]: (state: IResetPassword) => {
       state.userMessage = SUCC_EMAIL_SENT;
       state.loading = false;
       state.requestSuccess = true;
     },
-    [forgotPassword.rejected.type]: (state: StateType, { payload }) => {
+    [forgotPassword.rejected.type]: (state: IResetPassword, { payload }) => {
       state.devError = payload;
       state.userMessage = ERR_EMAIL_RESET;
       state.loading = false;
@@ -80,20 +68,19 @@ const resetPasswordSlice = createSlice({
     },
 
     // Восстановление пароля
-    [resetPassword.pending.type]: (state: StateType) => {
+    [resetPassword.pending.type]: (state: IResetPassword) => {
       state.loading = true;
     },
-    [resetPassword.fulfilled.type]: (state: StateType) => {
+    [resetPassword.fulfilled.type]: (state: IResetPassword) => {
       state.userMessage = SUCC_PASSWORD_CHANGE;
       state.loading = false;
       state.changeSuccess = true;
     },
-    [resetPassword.rejected.type]: (state: StateType, { payload }) => {
+    [resetPassword.rejected.type]: (state: IResetPassword, { payload }) => {
       state.devError = payload;
       state.userMessage = ERR_USER_RESET_PASSWORD;
       state.loading = false;
       state.changeSuccess = false;
-
     },
   },
 });

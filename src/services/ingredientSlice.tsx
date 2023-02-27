@@ -1,16 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getData } from "../utils/utils";
 import { BASE_URL } from "../utils/constants";
-import { IngredientObject } from "../utils/interfaces";
+import { IIngredientsState } from "../utils/interfaces";
 
-export interface IngredientsState {
-  ingredientsData: IngredientObject[];
-  modalIngredient: IngredientObject | null;
-  status: "idle" | "loading" | "succeeded" | "failed";
-  error: string | null | undefined;
-}
-
-const initialState: IngredientsState = {
+const initialState: IIngredientsState = {
   ingredientsData: [],
   modalIngredient: null,
   status: "idle",
@@ -29,7 +22,7 @@ const ingredientsSlice = createSlice({
   // Отправляем ингредиенты и обрабатываем ответ
   extraReducers(builder) {
     builder
-      .addCase(fetchIngredients.pending, (state, action) => {
+      .addCase(fetchIngredients.pending, (state) => {
         state.status = "loading";
       })
       .addCase(fetchIngredients.fulfilled, (state, action) => {

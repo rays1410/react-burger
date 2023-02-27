@@ -17,32 +17,35 @@ import {
 import { AppDispatch, useAppSelector } from "../../index";
 import { useDispatch } from "react-redux";
 import { useDrop } from "react-dnd/dist/hooks";
-import { IngredientObject } from "../../utils/interfaces";
+import { IIngredientObject } from "../../utils/interfaces";
 import { sendOrderRequest } from "../../services/constructorSlice";
 import Modal from "../modal/modal";
 import { useNavigate } from "react-router-dom";
 import { PATH_LOGIN } from "../../utils/pageNames";
 import { getAuthSlice, getBurgerSlice } from "../../utils/utils";
+import { TBunPosition } from "../../utils/types";
+
+
 
 const BurgerConstructor = () => {
   // Достаем текущее состояние конструктора
   const { currentIngredients, currentBun, totalPrice } =
     useAppSelector(getBurgerSlice);
   const { isUserLogged } = useAppSelector(getAuthSlice);
-  
+
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   // Хук дропа карточек в конструктор
   const [, dropTarget] = useDrop({
     accept: "ingredient-card",
-    drop(ingredient: IngredientObject) {
+    drop(ingredient: IIngredientObject) {
       onDropHandler(ingredient);
     },
   });
 
   // Обработка дропа
-  const onDropHandler = (ingredient: IngredientObject) => {
+  const onDropHandler = (ingredient: IIngredientObject) => {
     // Если дропнутый ингредиент - булка, то меняем булку,
     // иначе - добавляем ингредиент
 
@@ -91,7 +94,7 @@ const BurgerConstructor = () => {
   };
 
   // Часть, которая описывает верхнюю и нижнюю булки
-  const bunPart = (position: "top" | "bottom") => {
+  const bunPart = (position: TBunPosition) => {
     // Общий класс для пустой булки
     const bunClass = `${constructorStyles.emptyBun} text text_type_main-small`;
 

@@ -1,6 +1,6 @@
 import ingredientDetailsStyles from "./ingredient-details.module.css";
 import { nutrientsNameMapping } from "../../utils/constants";
-import { IngredientObject } from "../../utils/interfaces";
+import { IIngredientObject } from "../../utils/interfaces";
 import { useAppSelector } from "../..";
 import { getIngredientsSlice } from "../../utils/utils";
 import Loader from "../loader/loader";
@@ -26,7 +26,7 @@ const IngredientDetails = () => {
               {value}
             </p>
             <p className={`text text_type_digits-default text_color_inactive`}>
-              {modalIngredient[key as keyof IngredientObject]}
+              {modalIngredient[key as keyof IIngredientObject]}
             </p>
           </div>
         ))}

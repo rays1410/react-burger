@@ -18,8 +18,6 @@ const ResetPasswordPage = () => {
   const [emailToken, setEmailToken] = useState("");
   const { state } = useLocation();
 
-  console.log();
-
   const dispatch = useDispatch<AppDispatch>();
   const { changeSuccess, userMessage, loading } = useAppSelector(
     getResetPasswordSlice
