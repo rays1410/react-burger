@@ -97,7 +97,6 @@ const constructorSlice = createSlice({
       .addCase(sendOrderRequest.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.modalStatus = "order-success";
-        console.log(action);
         state.orderNumber = action.payload;
       })
       .addCase(sendOrderRequest.rejected, (state, action) => {
