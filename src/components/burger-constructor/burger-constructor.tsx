@@ -25,8 +25,6 @@ import { PATH_LOGIN } from "../../utils/pageNames";
 import { getAuthSlice, getBurgerSlice } from "../../utils/utils";
 import { TBunPosition } from "../../utils/types";
 
-
-
 const BurgerConstructor = () => {
   // Достаем текущее состояние конструктора
   const { currentIngredients, currentBun, totalPrice } =
@@ -87,9 +85,7 @@ const BurgerConstructor = () => {
       // Оборачиваем ингредиенты в булки
       const idArray = [currentBun._id, ...ingredientsId, currentBun._id];
 
-      dispatch(sendOrderRequest(idArray)).then((payload) => {
-        return payload;
-      });
+      dispatch(sendOrderRequest(idArray));
     }
   };
 

@@ -9,11 +9,12 @@ import {
   forgotPasswordRequest,
   resetPasswordRequest,
 } from "../utils/resetPasswordUtils";
-import { IResetPassword } from "../utils/interfaces";
+import { IResetPassword, IResetPasswordData } from "../utils/interfaces";
+import { TRequestAnswer } from "../utils/types";
 
-export const forgotPassword = createAsyncThunk(
+export const forgotPassword = createAsyncThunk<TRequestAnswer, string>(
   "auth/forgotPassword",
-  async (email: string, thunkAPI) => {
+  async (email, thunkAPI) => {
     try {
       const { data } = await forgotPasswordRequest(email);
       return data;
@@ -23,20 +24,17 @@ export const forgotPassword = createAsyncThunk(
   }
 );
 
-export const resetPassword = createAsyncThunk(
-  "auth/resetPassword",
-  async (
-    { newPassword, emailToken }: { newPassword: string; emailToken: string },
-    thunkAPI
-  ) => {
-    try {
-      const { data } = await resetPasswordRequest(newPassword, emailToken);
-      return data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(ERR_USER_RESET_PASSWORD);
-    }
+export const resetPassword = createAsyncThunk<
+  TRequestAnswer,
+  IResetPasswordData
+>("auth/resetPassword", async ({ newPassword, emailToken }, thunkAPI) => {
+  try {
+    const { data } = await resetPasswordRequest(newPassword, emailToken);
+    return data;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(ERR_USER_RESET_PASSWORD);
   }
-);
+});
 
 const initialState = {
   loading: false,

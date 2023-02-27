@@ -97,6 +97,7 @@ const constructorSlice = createSlice({
       .addCase(sendOrderRequest.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.modalStatus = "order-success";
+        console.log(action);
         state.orderNumber = action.payload;
       })
       .addCase(sendOrderRequest.rejected, (state, action) => {
@@ -107,11 +108,15 @@ const constructorSlice = createSlice({
   },
 });
 
-export const sendOrderRequest = createAsyncThunk(
+export const sendOrderRequest = createAsyncThunk<number, string[]>(
   "order/sendOrder",
-  async (idArray: string[]) => {
-    const response = await postOrder(`${BASE_URL}/orders`, idArray);
-    return response;
+  async (idArray, thunkAPI) => {
+    try {
+      const data = await postOrder(`${BASE_URL}/orders`, idArray);
+      return data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
   }
 );
 

@@ -1,4 +1,5 @@
 import React from "react";
+import { TUserOpenData } from "./types";
 
 export interface IIngredientObject {
   _id: string;
@@ -64,17 +65,12 @@ export interface IConstructorItem {
   ingredient: IIngredientObject;
 }
 
-export interface IUserInfoObject {
-  email: string;
-  name: string;
-}
-
 export interface IAuthState {
   isAuthChecked: boolean;
   isUserLogged: boolean;
   isUserData: boolean;
   loading: boolean;
-  userInfo: null | IUserInfoObject;
+  userInfo: null | TUserOpenData;
   userMessage: null | string;
   devError: null | string;
 }
@@ -102,4 +98,15 @@ export interface IResetPassword {
   changeSuccess: boolean;
   userMessage: null | string;
   devError: null | string;
+}
+
+export interface IUserBaseData {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export interface IResetPasswordData {
+  newPassword: string;
+  emailToken: string;
 }

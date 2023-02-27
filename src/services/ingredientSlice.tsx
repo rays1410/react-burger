@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getData } from "../utils/utils";
 import { BASE_URL } from "../utils/constants";
-import { IIngredientsState } from "../utils/interfaces";
+import { IIngredientObject, IIngredientsState } from "../utils/interfaces";
 
 const initialState: IIngredientsState = {
   ingredientsData: [],
@@ -35,11 +35,15 @@ const ingredientsSlice = createSlice({
   },
 });
 
-export const fetchIngredients = createAsyncThunk(
+export const fetchIngredients = createAsyncThunk<IIngredientObject[]>(
   "ingredients/fetchIngredients",
-  async () => {
-    const response = await getData(`${BASE_URL}/ingredients`);
-    return response.data;
+  async (_, thunkAPI) => {
+    try {
+      const { data } = await getData(`${BASE_URL}/ingredients`);
+      return data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
   }
 );
 

@@ -1,12 +1,7 @@
 import { BASE_URL } from "./constants";
 import axios from "axios";
 import { getCookie } from "./cookieUtils";
-import {
-  TAuthRequest,
-  TChangeUserDataRequest,
-  TGetUserInfo,
-  TLogoutRequest,
-} from "./types";
+import { TAuthRequest, TGetUserInfo, TRequestAnswer } from "./types";
 
 export const userRegisterRequest = (
   name: string,
@@ -28,7 +23,7 @@ export const userLoginRequest = (email: string, password: string) => {
 };
 
 export const userLogoutRequest = (refreshToken: string) => {
-  return axios.post<TLogoutRequest>(`${BASE_URL}/auth/logout`, {
+  return axios.post<TRequestAnswer>(`${BASE_URL}/auth/logout`, {
     token: refreshToken,
   });
 };
@@ -39,7 +34,7 @@ export const changeUserDataRequest = (
   name: string,
   password: string
 ) => {
-  return axios.patch<TChangeUserDataRequest>(
+  return axios.patch<TGetUserInfo>(
     `${BASE_URL}/auth/user`,
     {
       email,

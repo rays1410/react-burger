@@ -28,18 +28,17 @@ import {
   ACCESS_TOKEN_TTL,
   REFRESH_TOKEN_NAME,
 } from "../utils/constants";
-import { IAuthState, IUserInfoObject } from "../utils/interfaces";
+import { IAuthState, IUserBaseData } from "../utils/interfaces";
+import {
+  TAuthRequest,
+  TGetUserInfo,
+  TUserLogin,
+  TUserOpenData,
+} from "../utils/types";
 
-export const userRegister = createAsyncThunk(
+export const userRegister = createAsyncThunk<TAuthRequest, IUserBaseData>(
   "auth/register",
-  async (
-    {
-      name,
-      email,
-      password,
-    }: { name: string; email: string; password: string },
-    thunkAPI
-  ) => {
+  async ({ name, email, password }, thunkAPI) => {
     try {
       const { data } = await userRegisterRequest(name, email, password);
       return data;
@@ -49,15 +48,11 @@ export const userRegister = createAsyncThunk(
   }
 );
 
-export const userLogin = createAsyncThunk(
+export const userLogin = createAsyncThunk<TAuthRequest, TUserLogin>(
   "auth/login",
-  async (
-    { email, password }: { email: string; password: string },
-    thunkAPI
-  ) => {
+  async ({ email, password }, thunkAPI) => {
     try {
       const { data } = await userLoginRequest(email, password);
-
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(ERR_USER_LOGIN);
@@ -79,16 +74,9 @@ export const userLogout = createAsyncThunk(
   { condition: () => tokenExists(REFRESH_TOKEN_NAME) }
 );
 
-export const changeUserData = createAsyncThunk(
+export const changeUserData = createAsyncThunk<TGetUserInfo, IUserBaseData>(
   "auth/changeUserData",
-  async (
-    {
-      email,
-      name,
-      password,
-    }: { email: string; name: string; password: string },
-    thunkAPI
-  ) => {
+  async ({ email, name, password }, thunkAPI) => {
     try {
       const accessToken = getCookie(ACCESS_TOKEN_NAME);
       const { data } = await changeUserDataRequest(
@@ -145,7 +133,7 @@ const initialState = {
   isUserLogged: false,
   isUserData: false,
   loading: false,
-  userInfo: {} as IUserInfoObject,
+  userInfo: {} as TUserOpenData,
   userMessage: null,
   devError: null,
 };
@@ -162,7 +150,7 @@ const authSlice = createSlice({
       state.isUserLogged = false;
       state.isUserData = false;
       state.loading = false;
-      state.userInfo = {} as IUserInfoObject;
+      state.userInfo = {} as TUserOpenData;
       state.userMessage = null;
       state.devError = null;
     },
