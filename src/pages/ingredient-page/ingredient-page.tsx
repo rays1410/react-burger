@@ -2,7 +2,7 @@ import { Navigate, useParams } from "react-router";
 import { useAppSelector } from "../..";
 import styles from "./ingredient-page.module.css";
 import { nutrientsNameMapping } from "../../utils/constants";
-import { IngredientObject } from "../../utils/interfaces";
+import { IIngredientObject } from "../../utils/interfaces";
 import { PATH_ERR } from "../../utils/pageNames";
 import { getIngredientsSlice } from "../../utils/utils";
 
@@ -27,7 +27,7 @@ const IngredientPage = () => {
               {value}
             </p>
             <p className={`text text_type_digits-default text_color_inactive`}>
-              {ingredient[key as keyof IngredientObject]}
+              {ingredient[key as keyof IIngredientObject]}
             </p>
           </div>
         ))}

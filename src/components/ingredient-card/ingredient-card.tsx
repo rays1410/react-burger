@@ -1,5 +1,5 @@
 import ingredientCardStyles from "./ingredient-card.module.css";
-import { IngredientCardType } from "../../utils/interfaces";
+import { IIngredientCard } from "../../utils/interfaces";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import React from "react";
 import { useAppSelector } from "../..";
@@ -10,7 +10,7 @@ import { getBurgerSlice } from "../../utils/utils";
 // we see in the left part of application
 
 const IngredientCard = React.memo(
-  ({ ingredient, ingredientClickHandler }: IngredientCardType) => {
+  ({ ingredient, ingredientClickHandler }: IIngredientCard) => {
     const [{ opacity }, dragRef] = useDrag(
       () => ({
         type: "ingredient-card",

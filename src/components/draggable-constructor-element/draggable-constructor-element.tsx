@@ -1,34 +1,24 @@
-import { useRef } from "react";
 import {
   ConstructorElement,
   DragIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
-import draggableConstructorElementStyles from "./draggable-constructor-element.module.css";
 import {
   calculateTotalPrice,
-  ConstructorItem,
   removeIngredient,
   reorderIngredients,
 } from "../../services/constructorSlice";
+import draggableConstructorElementStyles from "./draggable-constructor-element.module.css";
+import { useRef } from "react";
 import { useDispatch } from "react-redux";
 import type { Identifier } from "dnd-core";
 import { useDrag, useDrop, XYCoord } from "react-dnd";
+import { IDraggableConstructorElementProps, IDragItem } from "../../utils/interfaces";
 
-export interface DraggableConstructorElementProps {
-  index: number;
-  item: ConstructorItem;
-}
-
-interface DragItem {
-  index: number;
-  id: string;
-  type: string;
-}
 
 const DraggableConstructorElement = ({
   index,
   item,
-}: DraggableConstructorElementProps) => {
+}: IDraggableConstructorElementProps) => {
   const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement>(null);
 
@@ -42,7 +32,7 @@ const DraggableConstructorElement = ({
 
   // Этот большой кусок из доки react-dnd
   const [{ handlerId }, drop] = useDrop<
-    DragItem,
+  IDragItem,
     void,
     { handlerId: Identifier | null }
   >({
@@ -52,7 +42,7 @@ const DraggableConstructorElement = ({
         handlerId: monitor.getHandlerId(),
       };
     },
-    hover(item: DragItem, monitor) {
+    hover(item: IDragItem, monitor) {
       if (!ref.current) {
         return;
       }

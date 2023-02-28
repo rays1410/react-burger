@@ -5,26 +5,16 @@ import {
   nanoid,
 } from "@reduxjs/toolkit";
 import { BASE_URL } from "../utils/constants";
-import { IngredientObject } from "../utils/interfaces";
+import {
+  IBurgerIngredientsState,
+  IConstructorItem,
+  IIngredientObject,
+} from "../utils/interfaces";
 import { postOrder } from "../utils/utils";
-export interface ConstructorItem {
-  id: string;
-  ingredient: IngredientObject;
-}
 
-export interface BurgerIngredientsState {
-  currentIngredients: ConstructorItem[];
-  currentBun: IngredientObject;
-  orderNumber: number;
-  totalPrice: number;
-  status: "idle" | "loading" | "succeeded" | "failed";
-  modalStatus: "no-bun-error" | "bun-there" | "order-success" | "order-failed";
-  error: string | null | undefined;
-}
-
-const initialState: BurgerIngredientsState = {
-  currentIngredients: [] as ConstructorItem[],
-  currentBun: {} as IngredientObject,
+const initialState: IBurgerIngredientsState = {
+  currentIngredients: [] as IConstructorItem[],
+  currentBun: {} as IIngredientObject,
   orderNumber: -1,
   totalPrice: 0,
   status: "idle",
@@ -39,14 +29,14 @@ const constructorSlice = createSlice({
     // Добавляем ингредиент
     addIngredient: {
       // Сам редьюсер
-      reducer: (state, action: PayloadAction<ConstructorItem>) => {
+      reducer: (state, action: PayloadAction<IConstructorItem>) => {
         state.currentIngredients.push(action.payload);
       },
 
       // Дефолтный айдишник IngredientObject нам не подходит (он не уникальный),
       // поэтому добавляем уникальный с помощью nanoid и только потом
       // кладем к ингредиентам
-      prepare: (ingredient: IngredientObject) => {
+      prepare: (ingredient: IIngredientObject) => {
         const id = nanoid();
         return { payload: { id, ingredient } };
       },
@@ -90,8 +80,8 @@ const constructorSlice = createSlice({
 
     // Ресетим хранилище после успешного получения номера заказа
     reset(state) {
-      state.currentBun = {} as IngredientObject;
-      state.currentIngredients = [] as ConstructorItem[];
+      state.currentBun = {} as IIngredientObject;
+      state.currentIngredients = [] as IConstructorItem[];
       state.orderNumber = -1;
       state.modalStatus = "no-bun-error";
       state.error = null;
@@ -101,7 +91,7 @@ const constructorSlice = createSlice({
   // Тут ловим результат запроса
   extraReducers(builder) {
     builder
-      .addCase(sendOrderRequest.pending, (state, action) => {
+      .addCase(sendOrderRequest.pending, (state) => {
         state.status = "loading";
       })
       .addCase(sendOrderRequest.fulfilled, (state, action) => {
@@ -117,11 +107,15 @@ const constructorSlice = createSlice({
   },
 });
 
-export const sendOrderRequest = createAsyncThunk(
+export const sendOrderRequest = createAsyncThunk<number, string[]>(
   "order/sendOrder",
-  async (idArray: string[]) => {
-    const response = await postOrder(`${BASE_URL}/orders`, idArray);
-    return response;
+  async (idArray, thunkAPI) => {
+    try {
+      const data = await postOrder(`${BASE_URL}/orders`, idArray);
+      return data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
   }
 );
 

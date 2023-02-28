@@ -1,16 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getData } from "../utils/utils";
 import { BASE_URL } from "../utils/constants";
-import { IngredientObject } from "../utils/interfaces";
+import { IIngredientObject, IIngredientsState } from "../utils/interfaces";
 
-export interface IngredientsState {
-  ingredientsData: IngredientObject[];
-  modalIngredient: IngredientObject | null;
-  status: "idle" | "loading" | "succeeded" | "failed";
-  error: string | null | undefined;
-}
-
-const initialState: IngredientsState = {
+const initialState: IIngredientsState = {
   ingredientsData: [],
   modalIngredient: null,
   status: "idle",
@@ -29,7 +22,7 @@ const ingredientsSlice = createSlice({
   // Отправляем ингредиенты и обрабатываем ответ
   extraReducers(builder) {
     builder
-      .addCase(fetchIngredients.pending, (state, action) => {
+      .addCase(fetchIngredients.pending, (state) => {
         state.status = "loading";
       })
       .addCase(fetchIngredients.fulfilled, (state, action) => {
@@ -42,11 +35,15 @@ const ingredientsSlice = createSlice({
   },
 });
 
-export const fetchIngredients = createAsyncThunk(
+export const fetchIngredients = createAsyncThunk<IIngredientObject[]>(
   "ingredients/fetchIngredients",
-  async () => {
-    const response = await getData(`${BASE_URL}/ingredients`);
-    return response.data;
+  async (_, thunkAPI) => {
+    try {
+      const { data } = await getData(`${BASE_URL}/ingredients`);
+      return data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
   }
 );
 

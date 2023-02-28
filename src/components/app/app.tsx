@@ -34,11 +34,11 @@ import {
 import Loader from "../loader/loader";
 import { getAuthSlice, getIngredientsSlice } from "../../utils/utils";
 
-function App() {
+const App = () => {
   const location = useLocation();
-  const background = location.state && location.state.background;
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  const background = location.state && location.state.background;
   const { status } = useAppSelector(getIngredientsSlice);
   const { isUserData, loading } = useAppSelector(getAuthSlice);
   useEffect(() => {
@@ -143,6 +143,6 @@ function App() {
   );
 
   return status === "succeeded" && !loading ? router : <Loader />;
-}
+};
 
 export default App;

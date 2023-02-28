@@ -3,7 +3,7 @@ import { Link, Element } from "react-scroll";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import IngredientType from "../ingredient-type/ingredient-type";
 import ingredientStyles from "./burger-ingredients.module.css";
-import { IngredientObject } from "../../utils/interfaces";
+import { IIngredientObject } from "../../utils/interfaces";
 import { titlesEntries } from "../../utils/constants";
 import { useAppSelector } from "../..";
 import { useDispatch } from "react-redux";
@@ -12,7 +12,10 @@ import { getIngredientsSlice } from "../../utils/utils";
 
 // Find all entries of ingredient type
 // For example, if typeName is 'bun', function returns array of all buns
-function findButchItems(typeName: string, ingredientsData: IngredientObject[]) {
+function findButchItems(
+  typeName: string,
+  ingredientsData: IIngredientObject[]
+) {
   return ingredientsData.filter((item) => item.type === typeName);
 }
 
@@ -22,7 +25,7 @@ const BurgerIngredients = () => {
   // State for modal window
   const dispatch = useDispatch();
 
-  const ingredientClickHandler = (ingredient: IngredientObject) => {
+  const ingredientClickHandler = (ingredient: IIngredientObject) => {
     dispatch(setModalIngredient(ingredient));
   };
 
@@ -31,7 +34,7 @@ const BurgerIngredients = () => {
 
   // Мемоизируем ингредиенты
   const content = useMemo(() => {
-    return titlesEntries.map(([key, value], indx) => (
+    return titlesEntries.map(([key, value]) => (
       <IngredientType
         key={key}
         data={findButchItems(key, ingredientsData)}

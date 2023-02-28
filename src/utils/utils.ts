@@ -15,7 +15,7 @@ export const postOrder = async (url: string, idArray: string[]) => {
     .post(url, {
       ingredients: idArray,
     })
-    .then((res: any) => {
+    .then((res) => {
       return res.data.success ? res.data.order.number : 0;
     });
 };

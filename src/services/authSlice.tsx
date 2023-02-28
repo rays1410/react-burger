@@ -28,17 +28,17 @@ import {
   ACCESS_TOKEN_TTL,
   REFRESH_TOKEN_NAME,
 } from "../utils/constants";
+import { IAuthState, IUserBaseData } from "../utils/interfaces";
+import {
+  TAuthRequest,
+  TGetUserInfo,
+  TUserLogin,
+  TUserOpenData,
+} from "../utils/types";
 
-export const userRegister = createAsyncThunk(
+export const userRegister = createAsyncThunk<TAuthRequest, IUserBaseData>(
   "auth/register",
-  async (
-    {
-      name,
-      email,
-      password,
-    }: { name: string; email: string; password: string },
-    thunkAPI
-  ) => {
+  async ({ name, email, password }, thunkAPI) => {
     try {
       const { data } = await userRegisterRequest(name, email, password);
       return data;
@@ -48,15 +48,11 @@ export const userRegister = createAsyncThunk(
   }
 );
 
-export const userLogin = createAsyncThunk(
+export const userLogin = createAsyncThunk<TAuthRequest, TUserLogin>(
   "auth/login",
-  async (
-    { email, password }: { email: string; password: string },
-    thunkAPI
-  ) => {
+  async ({ email, password }, thunkAPI) => {
     try {
       const { data } = await userLoginRequest(email, password);
-
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(ERR_USER_LOGIN);
@@ -69,7 +65,7 @@ export const userLogout = createAsyncThunk(
   async (_, thunkAPI) => {
     const refreshToken = getCookie(REFRESH_TOKEN_NAME);
     try {
-      const { data } = await userLogoutRequest(refreshToken);
+      const { data } = await userLogoutRequest(refreshToken as any);
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(ERR_USER_LOGOUT);
@@ -78,20 +74,13 @@ export const userLogout = createAsyncThunk(
   { condition: () => tokenExists(REFRESH_TOKEN_NAME) }
 );
 
-export const changeUserData = createAsyncThunk(
+export const changeUserData = createAsyncThunk<TGetUserInfo, IUserBaseData>(
   "auth/changeUserData",
-  async (
-    {
-      email,
-      name,
-      password,
-    }: { email: string; name: string; password: string },
-    thunkAPI
-  ) => {
+  async ({ email, name, password }, thunkAPI) => {
     try {
       const accessToken = getCookie(ACCESS_TOKEN_NAME);
       const { data } = await changeUserDataRequest(
-        accessToken,
+        accessToken as any,
         email,
         name,
         password
@@ -111,7 +100,7 @@ export const getNewAccessToken = createAsyncThunk(
   async (_, thunkAPI) => {
     const refreshToken = getCookie(REFRESH_TOKEN_NAME);
     try {
-      const { data } = await accessTokenRequest(refreshToken);
+      const { data } = await accessTokenRequest(refreshToken as any);
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(ERR_ACCESS_TOKEN_ISNT_UPDATED);
@@ -144,39 +133,24 @@ const initialState = {
   isUserLogged: false,
   isUserData: false,
   loading: false,
-  userInfo: {} as UserInfoObject,
+  userInfo: {} as TUserOpenData,
   userMessage: null,
   devError: null,
 };
-
-interface UserInfoObject {
-  email: string;
-  name: string;
-}
-
-interface StateType {
-  isAuthChecked: boolean;
-  isUserLogged: boolean;
-  isUserData: boolean;
-  loading: boolean;
-  userInfo: null | UserInfoObject;
-  userMessage: null | string;
-  devError: null | string;
-}
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    clearUserMessage: (state: StateType) => {
+    clearUserMessage: (state: IAuthState) => {
       state.userMessage = null;
     },
-    clearUser: (state: StateType) => {
+    clearUser: (state: IAuthState) => {
       state.isAuthChecked = false;
       state.isUserLogged = false;
       state.isUserData = false;
       state.loading = false;
-      state.userInfo = {} as UserInfoObject;
+      state.userInfo = {} as TUserOpenData;
       state.userMessage = null;
       state.devError = null;
     },
@@ -184,10 +158,10 @@ const authSlice = createSlice({
 
   extraReducers: {
     // Обработка регистрации
-    [userRegister.pending.type]: (state: StateType) => {
+    [userRegister.pending.type]: (state: IAuthState) => {
       state.loading = true;
     },
-    [userRegister.fulfilled.type]: (state: StateType, { payload }) => {
+    [userRegister.fulfilled.type]: (state: IAuthState, { payload }) => {
       state.userInfo = payload.user;
       state.isUserData = true;
       state.isAuthChecked = true;
@@ -195,10 +169,10 @@ const authSlice = createSlice({
       state.loading = false;
       state.userMessage = SUCC_REGISTRATION;
       state.devError = null;
-      setCookie(ACCESS_TOKEN_NAME, payload.accessToken);
+      setCookie(ACCESS_TOKEN_NAME, payload.accessToken, ACCESS_TOKEN_TTL);
       setCookie(REFRESH_TOKEN_NAME, payload.refreshToken);
     },
-    [userRegister.rejected.type]: (state: StateType, { payload }) => {
+    [userRegister.rejected.type]: (state: IAuthState, { payload }) => {
       state.loading = false;
       state.isUserData = false;
       state.userMessage = ERR_USER_REGISTRATION;
@@ -206,10 +180,10 @@ const authSlice = createSlice({
     },
 
     // Обработка логина
-    [userLogin.pending.type]: (state: StateType) => {
+    [userLogin.pending.type]: (state: IAuthState) => {
       state.loading = true;
     },
-    [userLogin.fulfilled.type]: (state: StateType, { payload }) => {
+    [userLogin.fulfilled.type]: (state: IAuthState, { payload }) => {
       state.userInfo = payload.user;
       state.isUserData = true;
       state.isAuthChecked = true;
@@ -217,12 +191,10 @@ const authSlice = createSlice({
       state.loading = false;
       state.userMessage = SUCC_LOGIN;
       state.devError = null;
-      setCookie(ACCESS_TOKEN_NAME, payload.accessToken, {
-        expires: ACCESS_TOKEN_TTL,
-      });
+      setCookie(ACCESS_TOKEN_NAME, payload.accessToken, ACCESS_TOKEN_TTL);
       setCookie(REFRESH_TOKEN_NAME, payload.refreshToken);
     },
-    [userLogin.rejected.type]: (state: StateType, { payload }) => {
+    [userLogin.rejected.type]: (state: IAuthState, { payload }) => {
       state.loading = false;
       state.isUserData = false;
       state.userMessage = ERR_USER_LOGIN;
@@ -230,17 +202,17 @@ const authSlice = createSlice({
     },
 
     // Изменение данных юзера
-    [changeUserData.pending.type]: (state: StateType) => {
+    [changeUserData.pending.type]: (state: IAuthState) => {
       state.loading = true;
     },
-    [changeUserData.fulfilled.type]: (state: StateType, { payload }) => {
+    [changeUserData.fulfilled.type]: (state: IAuthState, { payload }) => {
       state.userInfo = payload.user;
       state.isUserData = true;
       state.loading = false;
       state.userMessage = SUCC_USER_DATA_UPDATE;
       state.devError = null;
     },
-    [changeUserData.rejected.type]: (state: StateType, { payload }) => {
+    [changeUserData.rejected.type]: (state: IAuthState, { payload }) => {
       state.loading = false;
       state.isUserData = false;
       state.devError = payload;
@@ -248,10 +220,10 @@ const authSlice = createSlice({
     },
 
     // Логаут
-    [userLogout.pending.type]: (state: StateType) => {
+    [userLogout.pending.type]: (state: IAuthState) => {
       state.loading = true;
     },
-    [userLogout.fulfilled.type]: (state: StateType) => {
+    [userLogout.fulfilled.type]: (state: IAuthState) => {
       state.userInfo = null;
       state.isUserData = false;
       state.isAuthChecked = true; // #
@@ -262,7 +234,7 @@ const authSlice = createSlice({
       deleteCookie(ACCESS_TOKEN_NAME);
       deleteCookie(REFRESH_TOKEN_NAME);
     },
-    [userLogout.rejected.type]: (state: StateType, { payload }) => {
+    [userLogout.rejected.type]: (state: IAuthState, { payload }) => {
       state.loading = false;
       state.isUserData = false;
       state.devError = payload;
@@ -270,31 +242,29 @@ const authSlice = createSlice({
     },
 
     // Новые токены
-    [getNewAccessToken.pending.type]: (state: StateType) => {
+    [getNewAccessToken.pending.type]: (state: IAuthState) => {
       state.loading = true;
     },
-    [getNewAccessToken.fulfilled.type]: (state: StateType, { payload }) => {
+    [getNewAccessToken.fulfilled.type]: (state: IAuthState, { payload }) => {
       state.loading = false;
       state.userMessage = null;
       state.devError = null;
       deleteCookie(ACCESS_TOKEN_NAME);
       deleteCookie(REFRESH_TOKEN_NAME);
-      setCookie(ACCESS_TOKEN_NAME, payload.accessToken, {
-        expires: ACCESS_TOKEN_TTL,
-      });
+      setCookie(ACCESS_TOKEN_NAME, payload.accessToken, ACCESS_TOKEN_TTL);
       setCookie(REFRESH_TOKEN_NAME, payload.refreshToken);
     },
-    [getNewAccessToken.rejected.type]: (state: StateType) => {
+    [getNewAccessToken.rejected.type]: (state: IAuthState) => {
       state.loading = false;
       state.devError = ERR_SERVER;
       state.userMessage = ERR_SERVER;
     },
 
     // Проверка auth
-    [checkUserAuth.pending.type]: (state: StateType) => {
+    [checkUserAuth.pending.type]: (state) => {
       state.loading = true;
     },
-    [checkUserAuth.fulfilled.type]: (state: StateType, { payload }) => {
+    [checkUserAuth.fulfilled.type]: (state, { payload }) => {
       state.userInfo = payload.user;
       state.isUserData = true;
       state.isAuthChecked = true;
@@ -303,7 +273,7 @@ const authSlice = createSlice({
       state.userMessage = null;
       state.devError = null;
     },
-    [checkUserAuth.rejected.type]: (state: StateType, { payload }) => {
+    [checkUserAuth.rejected.type]: (state: IAuthState, { payload }) => {
       state.isAuthChecked = true;
       state.isUserData = false;
       state.loading = false;
